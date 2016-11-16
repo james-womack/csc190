@@ -4,4 +4,10 @@
 @{
 }
 
-<h1>This is the login controller</h1>
+@section Scripts{
+    <script type="text/javascript" src="js/login/index.js"></script>
+}
+
+<div id="testVue">
+    <h3><span v-bind:title="messageTitle">{{ message }}</span></h3>
+</div>
