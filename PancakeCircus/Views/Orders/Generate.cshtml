@@ -3,7 +3,10 @@
 *@
 @{
 }
-<button type="button" class="btn btn-success">Generate Order</button>
+.btn-success {padding-top: 20px;}
+<button type="button" class="btn btn-success center-block btn-lg">Generate Order</button>
+.btn-success {padding-top: 20px;}
+
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
@@ -19,14 +22,35 @@
             <td>Eggs</td>
             <td>20 Cartons +/-</td>
             <td>200.00$</td>
-            <td>Vendor 1</td>
-
-</tr>
+            <td> <div class="dropdown">
+            <button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown">
+                     Vendor 1
+            <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+            <li><a href="#">Vendor 2</a></li>
+            <li><a href="#">Vendor 3</a></li>
+            </ul>
+            </div>
+            </td>
+        </tr>
         <tr class="success">
             <td>Flour</td>
             <td>20 lbs +/-</td>
             <td>100.69$</td>
-            <td>Vendor 2</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown">
+                        Vendor 1
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Vendor 2</a></li>
+                        <li><a href="#">Vendor 3</a></li>
+                    </ul>
+                </div>
+            </td>
+           
         </tr>
     </tbody>
 </table>
