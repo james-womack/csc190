@@ -8,8 +8,9 @@ var editInst = new Vue({
         incrementItem: function(item) {
             item.amount += 1;
         },
-        decrementItem: function(item) {
-            item.amount -= 1;
+        decrementItem: function (item) {
+            if (item.amount > 0)
+                item.amount -= 1;
         },
         removeItem: function(item) {
             this.items.splice(this.items.indexOf(item), 1);
@@ -27,6 +28,15 @@ function Item (name, amount, units) {
     this.units = units;
 }
 
+$("#itemUnits")
+    .keyup(function(e) {
+        if (e.which !== 13 || e.keyCode !== 13) return;
+
+        e.preventDefault();
+        addNewItem();
+        $("#addItemModal").modal("hide");
+    });
+
 // Adds a new item to the vue instance
 function addNewItem() {
     var itemName = $("#itemName").val();
@@ -40,8 +50,12 @@ function addNewItem() {
     if (!itemUnits || !itemUnits.trim().length)
         return;
 
-    if (isNaN(parseFloat(itemInitAmount)) || !isFinite(itemInitAmount))
+    if (isNaN(parseFloat(itemInitAmount)) || !isFinite(itemInitAmount) || itemInitAmount < 0)
         return;
 
     editInst.addItem(new Item(itemName, itemInitAmount, itemUnits));
+
+    $("#itemName").val('');
+    $("#itemUnits").val('');
+    $("#itemInitAmount").val('');
 }
