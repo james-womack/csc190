@@ -1,4 +1,5 @@
 ﻿/// <autosync enabled="true" />
+/// <reference path="js/home/edit.js" />
 /// <reference path="js/login/index.js" />
 /// <reference path="js/orders/index.js" />
 /// <reference path="js/site.js" />
