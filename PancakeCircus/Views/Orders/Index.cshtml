@@ -3,11 +3,66 @@
 *@
 @{
 }
-@section Scripts{
-    <script type="text/javascript" src="js/orders/index.js"></script>
-}
-<h1>Create/view orders here</h1>
-
-<div id="test">
-    <h1>java script test: {{message}}</h1>
+<div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+        Location
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a href="#">Location1</a></li>
+        <li><a href="#">Location2</a></li>
+        <li><a href="#">Location3</a></li>
+    </ul>
 </div>
+
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Order Number</th>
+            <th>Order Date</th>
+            <th>Total Price</th>
+            <th>Fullfilled</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="#">111-111-111</a></td>
+            <td>12/24/16</td>
+            <td>200.00$</td>
+            <td>y/n</td>
+
+        </tr>
+        <tr class="success">
+            <td><a href="#">222-222-222</a></td>
+            <td>1/7/17</td>
+            <td>100.00$</td>
+            <td>y/n</td>
+        </tr>
+        <tr class="danger">
+            <td><a href="#">333-333-333</a></td>
+            <td>3/7/16</td>
+            <td>150.00$</td>
+            <td>y/n</td>
+        </tr>
+        <tr class="info">
+            <td><a href="#">444-444-444</a></td>
+            <td>6/5/16</td>
+            <td>600.00$</td>
+            <td>y/n</td>
+        </tr>
+        <tr class="warning">
+            <td><a href="#">555-555-555</a></td>
+            <td>9/20/16</td>
+            <td>325.00$</td>
+            <td>y/n</td>
+        </tr>
+        <tr class="active">
+            <td><a href="#">666-666-666</a></td>
+            <td>8/16/16</td>
+            <td>225.00$</td>
+            <td>y/n</td>
+        </tr>
+    </tbody>
+</table>
