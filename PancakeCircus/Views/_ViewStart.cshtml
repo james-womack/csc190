@@ -1,3 +1,10 @@
 ﻿@{
-    Layout = "_Layout";
+    if (ViewData.Keys.Contains("Layout"))
+    {
+        Layout = (string) ViewData["Layout"];
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
 }
