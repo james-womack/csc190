@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using MySQL.Data.Entity.Extensions;
 
 namespace PancakeCircus
 {
@@ -29,11 +31,13 @@ namespace PancakeCircus
         {
             // Add framework services.
             services.AddMvc();
+            services.AddDbContext<PancakeContext>(options => options.UseMySQL(Configuration.GetConnectionString("DebugConnection"), b=>b.MigrationsAssembly("AspNet5MultipleProject")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, PancakeContext context) 
         {
+            context.Database.EnsureCreated();
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 

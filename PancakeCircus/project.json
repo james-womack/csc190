@@ -31,7 +31,7 @@
     "Microsoft.Extensions.Logging.Console": "1.1.0",
     "Microsoft.Extensions.Logging.Debug": "1.1.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
-    "MySql.Data.EntityFrameworkCore": "7.0.6-IR31" },
+    "SapientGuardian.EntityFrameworkCore.MySql": "7.1.19"},
 
   "tools": {
     "Microsoft.VisualStudio.Web.CodeGeneration.Tools": {
