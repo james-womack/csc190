@@ -15,6 +15,9 @@ namespace PancakeCircus.Models.SQL
         public string ZipCode { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
+        public List<Stock> Stocks { get; set; }
+        public List<Product> Products { get; set; }
+        public List<OrderItem> OrderItems { get; set; }
 
     }
 }
