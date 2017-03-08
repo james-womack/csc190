@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PancakeCircus.Models.SQL;
 
 namespace PancakeCircus 
 {
 
-    public class PancakeContext : DbContext
+    public class PancakeContext : IdentityDbContext<User>
     {
         public DbSet<Item> Items { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
@@ -67,20 +68,7 @@ namespace PancakeCircus
                 .HasForeignKey(p => p.ItemId);
             builder.Entity<Stock>()
                 .HasKey(p => new { p.ItemId, p.VendorId });
-
-            builder.Entity<UserPermission>()
-                .HasOne(p => p.Permission)
-                .WithMany(i => i.Permissions)
-                .HasForeignKey(p => p.PermissionId);
-            builder.Entity<UserPermission>()
-                .HasOne(p => p.User)
-                .WithMany(u => u.Permissions)
-                .HasForeignKey(p => p.UserId);
-            builder.Entity<UserPermission>()
-                .HasKey(p => new { p.PermissionId, p.UserId });
-
-
-
+            base.OnModelCreating(builder);
         }
     }
 

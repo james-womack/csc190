@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using MySQL.Data.Entity.Extensions;
+using PancakeCircus.Models.SQL;
 
 namespace PancakeCircus
 {
@@ -31,7 +33,10 @@ namespace PancakeCircus
         {
             // Add framework services.
             services.AddMvc();
-            services.AddDbContext<PancakeContext>(options => options.UseMySQL(Configuration.GetConnectionString("DebugConnection"), b=>b.MigrationsAssembly("AspNet5MultipleProject")));
+            services.AddDbContext<PancakeContext>(options => options.UseMySQL(Configuration.GetConnectionString("DebugConnection"), b=>b.MigrationsAssembly("PancakeCircus")));
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<PancakeContext>()
+                .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,8 +56,8 @@ namespace PancakeCircus
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseIdentity();
             app.UseStaticFiles();
-
             app.UseMvc();
         }
     }
