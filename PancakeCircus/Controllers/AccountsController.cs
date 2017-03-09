@@ -37,7 +37,14 @@ namespace PancakeCircus.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
-            return View(new LoginRequest());
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            return View();
         }
 
         [HttpPost("register")]
@@ -64,6 +71,14 @@ namespace PancakeCircus.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost("Logout")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _signIn.SignOutAsync();
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         public async Task<IActionResult> Login(LoginRequest model)
