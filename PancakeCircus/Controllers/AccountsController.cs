@@ -33,6 +33,13 @@ namespace PancakeCircus.Controllers
             return View();
         }
 
+        [HttpGet("Login")]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View(new LoginRequest());
+        }
+
         [HttpPost("register")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
