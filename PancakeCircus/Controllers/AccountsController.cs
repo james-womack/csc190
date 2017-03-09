@@ -40,7 +40,7 @@ namespace PancakeCircus.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("Register")]
         [AllowAnonymous]
         public IActionResult Register()
         {
