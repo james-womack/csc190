@@ -30,5 +30,12 @@ namespace PancakeCircus.Controllers.Api
             }
             return Ok();
         }
+        //Dont know if this is how you do the import part
+        // Also I dont know how to input the cvs part into it. 
+        [HttpPut("import")]
+        public IActionResult PutProduct([FromBody]Product product)
+        {
+            return Ok();
+        } 
     }
 }
