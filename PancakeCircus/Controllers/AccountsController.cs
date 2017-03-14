@@ -94,7 +94,7 @@ namespace PancakeCircus.Controllers
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User is locked out");
-                    return View("Locked Out");
+                    return View(model);
                 }
                 else
                 {
