@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PancakeCircus.Models.SQL;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,7 +16,7 @@ namespace PancakeCircus.Controllers.Api
         [HttpPost("new")]
         public IActionResult PostOrders([FromBody]OrderItem order)
         {
-            return Json(List<OrderItem>());
+            return Json(new List<OrderItem>());
         }
         [HttpGet("copy/{itemId}")]
         public IActionResult GetOrder(string itemId)
