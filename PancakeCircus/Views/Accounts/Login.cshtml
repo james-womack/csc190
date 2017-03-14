@@ -1,0 +1,62 @@
+﻿@model PancakeCircus.Controllers.LoginRequest
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "_LoginLayout";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+            <div class="" id="loginModal">
+                <div class="modal-header">
+                    <h3>Login/Register</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#login" data-toggle="tab">Login</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="login">
+                                <form action="" class="form-horizontal" method="POST">
+                                    <fieldset>
+                                        <div id="legend">
+                                            <br />
+                                            <legend class="">Login</legend>
+                                        </div>
+                                        <div class="control-group">
+                                            <!-- Username -->
+                                            <label class="control-label" for="username">Username</label>
+                                            <div class="controls">
+                                                <input type="text" id="username" name="username" placeholder="" class="form-control input-sm chat-input center-block">
+                                            </div>
+                                        </div>
+
+                                        <div class="control-group">
+                                            <!-- Password-->
+                                            <label class="control-label" for="password">Password</label>
+                                            <div class="controls">
+                                                <input type="password" id="password" name="password" placeholder="" class="form-control input-sm chat-input center-block">
+                                            </div>
+                                        </div>
+                                        <div class="control-group">
+                                            <!-- Button -->
+                                            <div class="controls">
+                                                <br/>
+                                                <button class="btn btn-success" formaction="/">Login</button>
+
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                                <br/>
+                                <a asp-controller="Accounts" asp-action="Register" asp-area=""> Dont have an Account? </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

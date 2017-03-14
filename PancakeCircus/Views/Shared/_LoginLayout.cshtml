@@ -18,15 +18,11 @@
 
 <body>
     <div class="container" style="text-align: center">
-        <form class="form-horizontal">
-            <div class="row-lg-offset-4 col-lg-offset-5">
-                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-            </div>
-                <div class="col-lg-offset-1 col-sm-10">
-                    <button type="submit" class="btn btn-default">Sign in</button>
-                </div>
-</form>
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; 2017 - PancakeCircus</p>
+        </footer>
     </div>
         <environment names="Development">
             <script src="~/lib/jquery/dist/jquery.js"></script>
