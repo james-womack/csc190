@@ -14,7 +14,7 @@
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+        </environment>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -41,6 +41,7 @@
                         </ul>
                     </li>
                     <li><a asp-area="" asp-controller="Accounts" asp-action="Index">Accounts</a></li>
+                    <li><a asp-area="" asp-controller="Accounts" asp-action="Login">Login</a></li>
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             Orders
