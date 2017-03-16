@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using MySQL.Data.Entity.Extensions;
+using PancakeCircus.Models;
 using PancakeCircus.Models.SQL;
 
 namespace PancakeCircus
@@ -34,11 +35,7 @@ namespace PancakeCircus
             // Add framework services.
             services.AddMvc();
             services.AddDbContext<PancakeContext>(options => options.UseMySQL(Configuration.GetConnectionString("DebugConnection"), b=>b.MigrationsAssembly("PancakeCircus")));
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<PancakeContext>()
-                .AddDefaultTokenProviders();
-
-            services.Configure<IdentityOptions>(opt =>
+            services.AddIdentity<User, IdentityRole>(opt =>
             {
                 opt.Password.RequireDigit = true;
                 opt.Password.RequireNonAlphanumeric = false;
@@ -49,13 +46,24 @@ namespace PancakeCircus
                 opt.Lockout.MaxFailedAccessAttempts = 10;
 
                 opt.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(120);
-                opt.Cookies.ApplicationCookie.LoginPath = "/Accounts/Login";
-                opt.Cookies.ApplicationCookie.LogoutPath = "/Accounts/Logout";
+                opt.Cookies.ApplicationCookie.LoginPath = "/Account/Login";
+                opt.Cookies.ApplicationCookie.LogoutPath = "/Account/Logout";
 
                 opt.User.RequireUniqueEmail = true;
                 opt.SignIn.RequireConfirmedEmail = false;
                 opt.SignIn.RequireConfirmedPhoneNumber = false;
-            });
+            })
+                .AddEntityFrameworkStores<PancakeContext>()
+                .AddDefaultTokenProviders()
+                .AddUserValidator<UserValidator<User>>();
+            
+            services.AddIdentityServer()
+                .AddTemporarySigningCredential()
+                .AddInMemoryPersistedGrants()
+                .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                .AddInMemoryApiResources(Config.GetApiResources())
+                .AddInMemoryClients(Config.GetClients())
+                .AddAspNetIdentity<User>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +72,15 @@ namespace PancakeCircus
             context.Database.EnsureCreated();
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions()
+            {
+                // TODO: Load from configuration file so we can change later
+                Authority = "http://localhost:5000",
+                RequireHttpsMetadata = false,
+
+                ApiName = "api"
+            });
 
             if (env.IsDevelopment())
             {
@@ -76,6 +93,7 @@ namespace PancakeCircus
             }
 
             app.UseIdentity();
+            app.UseIdentityServer();
             app.UseStaticFiles();
             app.UseMvc();
         }
