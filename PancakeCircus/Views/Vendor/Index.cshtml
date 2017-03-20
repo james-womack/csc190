@@ -3,6 +3,16 @@
 *@
 @{
 }
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/js/vendor/index.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/js/vendor/index.min.js"></script>
+    </environment>
+
+}
 <h1>Vendor 1 <span class="label label-default"></span></h1>
 <table class="table table-bordered table-hover">
     <thead>

@@ -3,4 +3,14 @@
 *@
 @{
 }
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/js/orders/details.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/js/orders/details.min.js"></script>
+    </environment>
+
+}
 <h1>view specific details for a previous order here</h1>
