@@ -9,6 +9,9 @@ namespace PancakeCircus
 {
     public class Config
     {
+        // TODO: Move to Database config share so when installed on clients computer its neater
+        public static readonly string Secret = "1fb6a420-c6f0-4b91-b3d4-979891d63d86".Sha256();
+        public static readonly string Api = "api";
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
             return new List<IdentityResource>()
@@ -35,13 +38,12 @@ namespace PancakeCircus
                     ClientId = "client",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
 
-                    // TODO: Change to storing in keystore!!!!!
                     ClientSecrets =
                     {
-                        new Secret("slut random specifically something random".Sha256())
+                        new Secret(Secret)
                     },
 
-                    AllowedScopes = { "api" }
+                    AllowedScopes = { Api }
                 },
 
                 new Client()
@@ -51,10 +53,10 @@ namespace PancakeCircus
 
                     ClientSecrets =
                     {
-                        new Secret("holly can't loca".Sha256())
+                        new Secret(Secret)
                     },
                     
-                    AllowedScopes = { "api" }
+                    AllowedScopes = { Api }
                 },
 
                 new Client()
@@ -67,7 +69,7 @@ namespace PancakeCircus
 
                     ClientSecrets =
                     {
-                        new Secret("I gave it to you".Sha256())
+                        new Secret(Secret)
                     },
                     
                     // TODO: Load from Database config
@@ -78,7 +80,7 @@ namespace PancakeCircus
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "api"
+                        Api
                     },
                     AllowOfflineAccess = true
                 }

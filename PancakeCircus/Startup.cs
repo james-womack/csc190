@@ -79,7 +79,7 @@ namespace PancakeCircus
                 Authority = "http://localhost:5000",
                 RequireHttpsMetadata = false,
 
-                ApiName = "api"
+                ApiName = Config.Api
             });
 
             if (env.IsDevelopment())

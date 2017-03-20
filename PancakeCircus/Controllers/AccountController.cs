@@ -114,9 +114,9 @@ namespace PancakeCircus.Controllers
             if (ModelState.IsValid)
             {
                 var disco = await DiscoveryClient.GetAsync("http://localhost:5000");
-                var tokenClient = new TokenClient(disco.TokenEndpoint, "ro.client", "holly can't loca");
+                var tokenClient = new TokenClient(disco.TokenEndpoint, "ro.client", Config.Secret);
                 var tokenResponse = await tokenClient.RequestResourceOwnerPasswordAsync(model.Email, model.Password,
-                    "api");
+                    Config.Api);
 
                 if (tokenResponse.IsError)
                 {
