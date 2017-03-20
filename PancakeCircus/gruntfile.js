@@ -5,7 +5,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
-        clean: ["wwwroot/lib/*", "temp/", 'wwwroot/js/**/*.min.js'],
+        clean: ['wwwroot/js/**/*.min.js', 'wwwroot/css/**/*.css'],
         jshint: {
             files: ['wwwroot/js/**/*.js'],
             options: {
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
         watch: {
             css: {
                 files: ['wwwroot/sass/**/*.scss', 'wwwroot/js/**/*.js'],
-                tasks: ['sass', 'jshint', 'uglify'],
+                tasks: ['clean', 'jshint', 'sass', 'uglify'],
                 options: {
                     spawn: false
                 }
@@ -58,5 +58,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.registerTask('dev', ['watch']);
-    grunt.registerTask('prod', ['sass', 'jshint', 'uglify']);
+    grunt.registerTask('prod', ['clean', 'sass', 'jshint', 'uglify']);
 };
