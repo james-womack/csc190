@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +15,14 @@ using PancakeCircus.Models.SQL;
 namespace PancakeCircus.Controllers
 {
     [Route("[controller]")]
-    public class AccountsController : Controller
+    public class AccountController : Controller
     {
         private readonly UserManager<User> _users;
         private readonly SignInManager<User> _signIn;
         private readonly ILogger _logger;
-        public AccountsController(UserManager<User> userManager, SignInManager<User> signInManager, ILoggerFactory loggerFactory)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger(typeof(AccountsController));
+            _logger = loggerFactory.CreateLogger(typeof(AccountController));
             _users = userManager;
             _signIn = signInManager;
         }
@@ -105,11 +107,35 @@ namespace PancakeCircus.Controllers
 
             return View(model);
         }
+
+        [HttpPost("TokenLogin")]
+        public async Task<IActionResult> TokenLogin([FromBody]LoginRequest model)
+        {
+            if (ModelState.IsValid)
+            {
+                var disco = await DiscoveryClient.GetAsync("http://localhost:5000");
+                var tokenClient = new TokenClient(disco.TokenEndpoint, "ro.client", Config.Secret);
+                var tokenResponse = await tokenClient.RequestResourceOwnerPasswordAsync(model.Email, model.Password,
+                    Config.Api);
+
+                if (tokenResponse.IsError)
+                {
+                    _logger.LogError(tokenResponse.Error);
+                    return BadRequest("Invalid User/Pass");
+                }
+
+                return Json(tokenResponse.Json);
+            }
+
+            return BadRequest("Invalid model");
+        }
     }
 
     public class LoginRequest
     {
+        [Required]
         public string Email { get; set; }
+        [Required]
         public string Password { get; set; }
         public bool RememberMe { get; set; } = true;
     }
