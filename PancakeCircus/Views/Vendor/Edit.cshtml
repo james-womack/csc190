@@ -3,4 +3,14 @@
 *@
 @{
 }
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/js/vendor/edit.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/js/vendor/edit.min.js"></script>
+    </environment>
+
+}
 <h1>Some mumbo jumbo</h1>

@@ -3,7 +3,13 @@
 }
 @section scripts
 {
-    <script type="text/javascript" src="~/js/home/edit.js"></script>
+<environment names="Development">
+    <script src="~/js/home/edit.js"></script>
+</environment>
+<environment names="Staging,Production">
+    <script src="~/js/home/edit.min.js"></script>
+</environment>
+
 }
 
 <h2>@ViewData["Title"].</h2>
