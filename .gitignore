@@ -9,6 +9,11 @@
 PancakeCircus/Properties/PublishProfiles/*
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+PancakeCircus/wwwroot/lib/
+PancakeCircus/wwwroot/css/
+*.min.js
+*.min.css
+
 
 # Build results
 [Dd]ebug/

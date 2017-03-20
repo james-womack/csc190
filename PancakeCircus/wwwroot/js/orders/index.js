@@ -3,4 +3,4 @@
     data: {
         message: "Xavier's Super Special Message With CAPS"
     }
-})
+});
