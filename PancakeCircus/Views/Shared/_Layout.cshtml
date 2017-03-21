@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    ViewData["Tab"] = "home";
+    ViewData["PageTitle"] = "Home";
+    ViewData["PageSubtitle"] = "You should probably change this at the top of the cshtml of the view";
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -11,25 +16,101 @@
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" asp-fallback-href="~/lib/font-awesome/font-awesome.css">
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
-    <div class="content is-fluid">
-        @RenderBody()
-    </div>
+    <nav class="nav has-shadow">
+        <div class="container">
+            <div class="nav-left">
+                <a class="nav-item">
+                    <img src="~/images/clown.png" alt="Pancake Circus" />
+                </a>
+                <a class="nav-item is-tab is-hidden-mobile pc-navTab" id="pc-homeTab">Home</a>
+                <a class="nav-item is-tab is-hidden-mobile pc-navTab" id="pc-ordersTab">Orders</a>
+                <a class="nav-item is-tab is-hidden-mobile pc-navTab" id="pc-vendorsTab">Vendors</a>
+            </div>
+            <div class="nav-right nav-menu">
+                <a class="nav-item is-tab is-hidden-tablet" asp-controller="Home" asp-action="Index">Inventory</a>
+                <a class="nav-item is-tab is-hidden-tablet" asp-controller="Home" asp-action="Edit">Edit Items</a>
+                <a class="nav-item is-tab is-hidden-tablet" asp-controller="Orders" asp-action="Index">View Orders</a>
+                <a class="nav-item is-tab is-hidden-tablet" asp-controller="Orders" asp-action="Generate">Generate Orders</a>
+                <a class="nav-item is-tab is-hidden-tablet" asp-controller="Vendor" asp-action="Index">View Vendors</a>
+                <a class="nav-item is-tab is-hidden-tablet" asp-controller="Vendor" asp-action="Edit">Edit Vendors</a>
+                <a class="nav-item is-tab">
+                    Account
+                </a>
+                <a class="nav-item is-tab">Log out</a>
+            </div>
+        </div>
+    </nav>
+    <nav class="nav has-shadow is-hidden pc-navSub" id="pc-homeBar">
+        <div class="container">
+            <div class="nav-left">
+                <a class="nav-item" asp-controller="Home" asp-action="Index">Current</a>
+                <a class="nav-item" asp-controller="Home" asp-action="Edit">Edit</a>
+            </div>
+        </div>
+    </nav>
+    <nav class="nav has-shadow is-hidden pc-navSub" id="pc-ordersBar">
+        <div class="container">
+            <div class="nav-left">
+                <a class="nav-item" asp-controller="Orders" asp-action="Index">View</a>
+                <a class="nav-item" asp-controller="Orders" asp-action="Generate">Generate</a>
+            </div>
+        </div>
+    </nav>
+    <nav class="nav has-shadow is-hidden pc-navSub" id="pc-vendorsBar">
+        <div class="container">
+            <div class="nav-left">
+                <a class="nav-item" asp-controller="Vendor" asp-action="Index">View</a>
+                <a class="nav-item" asp-controller="Vendor" asp-action="Edit">Edit</a>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="container">
+            <div class="heading">
+                <h1 class="title">@ViewData["PageTitle"]</h1>
+                <h2 class="subtitle">@ViewData["PageSubtitle"]</h2>
+            </div>
+            <br/>
+            <div class="content">
+                @RenderBody()
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer is-primary">
+        <div class="container">
+            <div class="content is-centered has-text-centered">
+                <p>
+                    <strong>Pancake Circus</strong> - Copyright 2017
+                </p>
+            </div>
+        </div>
+    </footer>
     <environment names="Development">
         <script src="~/lib/vue/dist/vue.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/lib/jQuery/dist/jquery.js"></script>
+        <script type="text/javascript">
+            var tab = @ViewData["Tab"];
+        </script>
+        <script src="~/js/site.js"></script>
     </environment>
     <environment names="Staging,Production">
-        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"
+                asp-fallback-src="~/lib/jQuery/dist/jquery.min.js"></script>
         <script src="https://unpkg.com/vue/dist/vue.min.js"
                 asp-fallback-src="~/lib/vue/dist/vue.min.js">
         </script>
+        <script type="text/javascript">
+        var tab = @ViewData["Tab"];
+        </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
-
     @RenderSection("scripts", required: false)
 </body>
 </html>
