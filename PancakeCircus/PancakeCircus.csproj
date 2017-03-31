@@ -58,11 +58,17 @@
     <Exec Command="gulp min" />
   </Target>
 
+  <Target Name="CompileFiles" BeforeTargets="BeforeBuild">
+    <Exec Command="npm install" />
+    <Exec Command="gulp min" />
+  </Target>
+
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\lib\" />
   </ItemGroup>
 
