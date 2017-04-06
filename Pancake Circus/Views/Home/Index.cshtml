@@ -1,9 +1,9 @@
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
-<div id='app-root'>Loading...</div>
-
-@section scripts {
-    <script src="~/dist/main.js" asp-append-version="true"></script>
+@section Scripts {
+    <script asp-src-include="~/dist/js/**/*.js" asp-fallback-src-exclude="~/dist/js/vendor.js"></script>
 }
+
+<div id="q-app"></div>

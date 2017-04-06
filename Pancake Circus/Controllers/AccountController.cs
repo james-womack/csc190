@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PancakeCircus.Models;
-using PancakeCircus.Models.AccountViewModels;
-using PancakeCircus.Services;
+using QuasarFrameworkTemplate.Models;
+using QuasarFrameworkTemplate.Models.AccountViewModels;
+using QuasarFrameworkTemplate.Services;
 
-namespace PancakeCircus.Controllers
+namespace QuasarFrameworkTemplate.Controllers
 {
     [Authorize]
     public class AccountController : Controller
@@ -39,19 +39,6 @@ namespace PancakeCircus.Controllers
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
-        }
-
-        //
-        // GET: /Account/Login
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = null)
-        {
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.Authentication.SignOutAsync(_externalCookieScheme);
-
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
         }
 
         //
@@ -93,16 +80,6 @@ namespace PancakeCircus.Controllers
         }
 
         //
-        // GET: /Account/Register
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Register(string returnUrl = null)
-        {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
-
-        //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -141,7 +118,7 @@ namespace PancakeCircus.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         //
@@ -152,51 +129,9 @@ namespace PancakeCircus.Controllers
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { ReturnUrl = returnUrl });
+            var redirectUrl = Url.Action("Index", "Home", new { ReturnUrl = returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
-        }
-
-        //
-        // GET: /Account/ExternalLoginCallback
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
-        {
-            if (remoteError != null)
-            {
-                ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-                return View(nameof(Login));
-            }
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
-            {
-                return RedirectToAction(nameof(Login));
-            }
-
-            // Sign in the user with this external login provider if the user already has a login.
-            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
-                return RedirectToLocal(returnUrl);
-            }
-            if (result.RequiresTwoFactor)
-            {
-                return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl });
-            }
-            if (result.IsLockedOut)
-            {
-                return View("Lockout");
-            }
-            else
-            {
-                // If the user does not have an account, then ask the user to create an account.
-                ViewData["ReturnUrl"] = returnUrl;
-                ViewData["LoginProvider"] = info.LoginProvider;
-                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
-            }
         }
 
         //
@@ -233,33 +168,6 @@ namespace PancakeCircus.Controllers
             return View(model);
         }
 
-        // GET: /Account/ConfirmEmail
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
-        {
-            if (userId == null || code == null)
-            {
-                return View("Error");
-            }
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return View("Error");
-            }
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
-        }
-
-        //
-        // GET: /Account/ForgotPassword
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
-
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
@@ -290,24 +198,6 @@ namespace PancakeCircus.Controllers
         }
 
         //
-        // GET: /Account/ForgotPasswordConfirmation
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ForgotPasswordConfirmation()
-        {
-            return View();
-        }
-
-        //
-        // GET: /Account/ResetPassword
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
-        {
-            return code == null ? View("Error") : View();
-        }
-
-        //
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
@@ -322,40 +212,15 @@ namespace PancakeCircus.Controllers
             if (user == null)
             {
                 // Don't reveal that the user does not exist
-                return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
+                return RedirectToAction("Index", "Home");
             }
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
+                return RedirectToAction("Index", "Home");
             }
             AddErrors(result);
             return View();
-        }
-
-        //
-        // GET: /Account/ResetPasswordConfirmation
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ResetPasswordConfirmation()
-        {
-            return View();
-        }
-
-        //
-        // GET: /Account/SendCode
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
-        {
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
-            {
-                return View("Error");
-            }
-            var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
-            var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
-            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
         //
@@ -397,21 +262,6 @@ namespace PancakeCircus.Controllers
         }
 
         //
-        // GET: /Account/VerifyCode
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> VerifyCode(string provider, bool rememberMe, string returnUrl = null)
-        {
-            // Require that the user has already logged in via username/password or external login
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
-            {
-                return View("Error");
-            }
-            return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
-        }
-
-        //
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
@@ -443,14 +293,6 @@ namespace PancakeCircus.Controllers
             }
         }
 
-        //
-        // GET /Account/AccessDenied
-        [HttpGet]
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
-
         #region Helpers
 
         private void AddErrors(IdentityResult result)
@@ -469,7 +311,7 @@ namespace PancakeCircus.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(HomeController.Index), "Home");
             }
         }
 
