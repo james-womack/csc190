@@ -1,7 +1,7 @@
 ﻿<template>
   <q-layout>
     <div slot="header" class="toolbar">
-      <button class="hide-on-drawer-visible" @click="$refs.drawer.open()" >
+      <button class="hide-on-drawer-visible" @click="openSeseame" >
         <i class="material-icons md-48">account_circle</i>
       </button>
       <q-toolbar-title :padding="1">
@@ -71,6 +71,9 @@ export default {
     }
   },
   methods: {
+    openSeseame (event) {
+      this.$refs.drawer.open()
+    },
     move (event) {
       const {width, height} = Utils.dom.viewport()
       const {top, left} = Utils.event.position(event)

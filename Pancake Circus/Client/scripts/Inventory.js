@@ -1,61 +1,96 @@
-﻿
-let config = {
-    // [REQUIRED] Set the row height
+﻿import { Platform, Utils, Toast } from 'quasar'
+
+let tableConfig = {
     rowHeight: '50px',
-    // (optional) Title to display
     title: 'Inventory',
-    // (optional) Display refresh button
     refresh: true,
-    // (optional)
-    // User will be able to choose which columns
-    // should be displayed
     columnPicker: true,
-    // (optional) How many columns from the left are sticky
-    leftStickyColumns: 0,
-    // (optional) How many columns from the right are sticky
+    leftStickyColumns: 1,
     rightStickyColumns: 2,
-    // (optional)
-    // Styling the body of the data table;
-    // "minHeight", "maxHeight" or "height" are important
-    bodyStyle: {
-        maxHeight: '500px'
-    },
-    // (optional) By default, Data Table is responsive,
-    // but you can disable this by setting the property to "false"
     responsive: true,
-    // (optional) Use pagination. Set how many rows per page
-    // and also specify an additional optional parameter ("options")
-    // which forces user to make a selection of how many rows per
-    // page he wants from a specific list
     pagination: {
         rowsPerPage: 15,
         options: [5, 10, 15, 30, 50, 500]
     },
-    // (optional) User can make selections. When "single" is specified
-    // then user will be able to select only one row at a time.
-    // Otherwise use "multiple".
     selection: 'multiple',
-    // (optional) Override default messages when no data is available
-    // or the user filtering returned no results.
     messages: {
-        noData: '<i>warning</i> No data available to show.',
-        noDataAfterFiltering: '<i>warning</i> No results. Please refine your search terms.'
-    },
-    // (optional) Override default labels. Useful for I18n.
-    labels: {
-        columns: 'Coluuuuumns',
-        allCols: 'Eeeeeeeeevery Cols',
-        rows: 'Rooows',
-        selected: {
-            singular: 'item selected.',
-            plural: 'items selected.'
-        },
-        clear: 'clear',
-        search: 'Search',
-        all: 'All'
+        noData: '<i>warning</i> Data there is not.',
+        noDataAfterFiltering: '<i>warning</i> Results are no, search terms redefine you must.'
     }
 }
 
+let tableData = [
+    {
+        Name: "Eggs",
+        Location: "Shelf A1 Sauce",
+        AmtLeft: 20,
+        Vendor: "Your Mom"
+    },
+    {
+        Name: "Flour",
+        Location: "Shelf A2 Sauce",
+        AmtLeft: 15,
+        Vendor: "Your Dad"
+    },
+    {
+        Name: "Milk",
+        Location: "Shelf Siracha",
+        AmtLeft: 10,
+        Vendor: "Yourself?"
+    },
+    {
+        Name: "Cereal",
+        Location: "Shelf BBQ Sauce",
+        AmtLeft: 69,
+        Vendor: "Your Childhood"
+    },
+]
+
+let tableColumns = [
+    {
+        label: 'Name',
+        field: 'Name',
+        width: '100px',
+        filter: true,
+        sort: 'string'
+    },
+    {
+        label: 'Location',
+        field: 'Location',
+        width: '80px',
+        filter: true,
+        sort: 'string'
+    },
+    {
+        label: 'Amount Left',
+        field: 'AmtLeft',
+        width: '80px',
+        filter: true,
+        sort: 'number'
+
+    },
+    {
+        label: 'Assfuckers',
+        field: 'Vendor',
+        width: '150px',
+        filter: true,
+        sort: 'string'
+    }
+]
+
 export default {
-  
+  data() {
+      return {
+          table: tableData,
+          config: tableConfig,
+          columns: tableColumns
+      }
+  },
+  methods: {
+      refresh (done) {
+          Toast.create('You hit the refresh button')
+          this.timeout = setTimeout(() => {              done()
+          }, 5000)
+      }
+  }
 }
