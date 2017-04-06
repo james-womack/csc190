@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using QuasarFrameworkTemplate.Models;
-using QuasarFrameworkTemplate.Models.AccountViewModels;
-using QuasarFrameworkTemplate.Services;
+using PancakeCircus.Models;
+using PancakeCircus.Models.AccountViewModels;
+using PancakeCircus.Services;
 
-namespace QuasarFrameworkTemplate.Controllers
+namespace PancakeCircus.Controllers
 {
     [Authorize]
     public class AccountController : Controller

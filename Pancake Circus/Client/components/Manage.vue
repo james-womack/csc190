@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-    <h1>Hello Ashlyn</h1>
+    <h1>Manage Page</h1>
   </div>
 </template>
 

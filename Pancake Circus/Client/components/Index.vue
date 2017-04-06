@@ -15,6 +15,7 @@
         <q-drawer-link to="/">Inventory</q-drawer-link>
         <q-drawer-link to="orders">Orders</q-drawer-link>
         <q-drawer-link to="vendors">Vendors</q-drawer-link>
+        <q-drawer-link to="manage">Manage</q-drawer-link>
       </div>
     </q-drawer>
 
