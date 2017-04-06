@@ -2,8 +2,9 @@
 // WARNING! always comment out ONE of the two require() calls below.
 // 1. use next line to activate CUSTOM STYLE (./src/themes)
 // require(`./themes/app.${__THEME}.styl`)
+require(`./themes/app.mat.styl`)
 // 2. or, use next line to activate DEFAULT QUASAR STYLE
-require(`quasar/dist/quasar.mat.css`)
+// require(`quasar/dist/quasar.mat.css`)
 // ==============================
 
 import Vue from 'vue'

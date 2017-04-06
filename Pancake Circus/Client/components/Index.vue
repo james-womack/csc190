@@ -1,7 +1,9 @@
 ﻿<template>
   <q-layout>
     <div slot="header" class="toolbar">
-      <button class="hide-on-drawer-visible" @click="$refs.drawer.open()"
+      <button class="primary" @click="$refs.drawer.open()" >
+        <i class="material-icons md-48">account_circle</i>
+      </button>
       <q-toolbar-title :padding="1">
         Pancake Circus
       </q-toolbar-title>
