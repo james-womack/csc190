@@ -4,6 +4,5 @@
   </div>
 </template>
 
-<script>
-  export default {}
+<script src="../scripts/Inventory.js">
 </script>
