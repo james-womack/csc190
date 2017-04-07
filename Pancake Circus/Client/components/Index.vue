@@ -1,7 +1,7 @@
 ﻿<template>
   <q-layout>
     <div slot="header" class="toolbar">
-      <button class="primary" @click="$refs.drawer.open()" >
+      <button class="hide-on-drawer-visible" @click="$refs.drawer.open()" >
         <i class="material-icons md-48">account_circle</i>
       </button>
       <q-toolbar-title :padding="1">
@@ -9,12 +9,12 @@
       </q-toolbar-title>
     </div>
 
-    <q-drawer>
+    <q-drawer ref="drawer">
       <div class="list platform-delimiter">
         <div class="list-header">
           Main
         </div>
-        <q-drawer-link to="/">Inventory</q-drawer-link>
+        <q-drawer-link to="inventory">Inventory</q-drawer-link>
         <q-drawer-link to="orders">Orders</q-drawer-link>
         <q-drawer-link to="vendors">Vendors</q-drawer-link>
         <q-drawer-link to="manage">Manage</q-drawer-link>
