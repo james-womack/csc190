@@ -14,9 +14,9 @@
         <div class="list-header">
           Main
         </div>
-        <q-drawer-link to="inventory">Inventory</q-drawer-link>
-        <q-drawer-link to="orders">Orders</q-drawer-link>
-        <q-drawer-link to="vendors">Vendors</q-drawer-link>
+        <q-drawer-link icon="home" to="inventory">Inventory</q-drawer-link>
+        <q-drawer-link icon="assessment" to="orders">Orders</q-drawer-link>
+        <q-drawer-link icon="" to="vendors">Vendors</q-drawer-link>
         <q-drawer-link to="manage">Manage</q-drawer-link>
       </div>
     </q-drawer>

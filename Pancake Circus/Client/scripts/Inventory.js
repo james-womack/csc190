@@ -24,25 +24,25 @@ let tableData = [
         Name: "Eggs",
         Location: "Shelf A1 Sauce",
         AmtLeft: 20,
-        Vendor: "Your Mom"
+        Vendor: "Vendor A"
     },
     {
         Name: "Flour",
         Location: "Shelf A2 Sauce",
         AmtLeft: 15,
-        Vendor: "Your Dad"
+        Vendor: "Vendor B"
     },
     {
         Name: "Milk",
         Location: "Shelf Siracha",
         AmtLeft: 10,
-        Vendor: "Yourself?"
+        Vendor: "Vendor A"
     },
     {
         Name: "Cereal",
         Location: "Shelf BBQ Sauce",
         AmtLeft: 69,
-        Vendor: "Your Childhood"
+        Vendor: "Vender B"
     },
 ]
 
@@ -70,7 +70,7 @@ let tableColumns = [
 
     },
     {
-        label: 'Assfuckers',
+        label: 'Vendor',
         field: 'Vendor',
         width: '150px',
         filter: true,
@@ -89,7 +89,8 @@ export default {
   methods: {
       refresh (done) {
           Toast.create('You hit the refresh button')
-          this.timeout = setTimeout(() => {              done()
+          this.timeout = setTimeout(() => {
+              done()
           }, 5000)
       }
   }
