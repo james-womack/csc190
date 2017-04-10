@@ -27,7 +27,8 @@ export default new VueRouter({
       children: [
         { path: 'orders', component: load('Orders') },
         { path: 'vendors', component: load('Vendors') },
-        { path: 'manage', component: load('Manage') }
+        { path: 'manage', component: load('Manage') },
+        { path: 'inventory', component: load('Inventory') }
       ]
     }, // Default
     { path: '*', component: load('Error404') } // Not found

@@ -15,6 +15,6 @@ namespace PancakeCircus.Models.SQL
         public Item Item { get; set; }
 
         public int OrderAmount { get; set; }
-        public string PartId { get; set; }
+        public int PaidPrice { get; set; }
     }
 }
