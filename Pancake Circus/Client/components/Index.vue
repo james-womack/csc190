@@ -2,7 +2,7 @@
   <q-layout>
     <div slot="header" class="toolbar">
       <button class="hide-on-drawer-visible" @click="openSeseame" >
-        <i class="material-icons md-48">account_circle</i>
+        <i class="material-icons md-48">menu</i>
       </button>
       <q-toolbar-title :padding="1">
         Pancake Circus
@@ -10,14 +10,17 @@
     </div>
 
     <q-drawer ref="drawer">
-      <div class="list platform-delimiter">
-        <div class="list-header">
+      <div class="toolbar light">
+        <q-toolbar-title :padding="1">
+          <i>home</i>
           Main
-        </div>
-        <q-drawer-link icon="home" to="inventory">Inventory</q-drawer-link>
-        <q-drawer-link icon="assessment" to="orders">Orders</q-drawer-link>
-        <q-drawer-link icon="" to="vendors">Vendors</q-drawer-link>
-        <q-drawer-link to="manage">Manage</q-drawer-link>
+        </q-toolbar-title>
+      </div>
+      <div class="list platform-delimiter">
+        <q-drawer-link icon="assessment" to="inventory">Inventory</q-drawer-link>
+        <q-drawer-link icon="assignment" to="orders">Orders</q-drawer-link>
+        <q-drawer-link icon="face" to="vendors">Vendors</q-drawer-link>
+        <q-drawer-link icon="supervisor_account" to="manage">Manage</q-drawer-link>
       </div>
     </q-drawer>
 
@@ -44,57 +47,24 @@
 </template>
 
 <script>
-var moveForce = 30
-var rotateForce = 40
-
-import { Utils } from 'quasar'
-
 export default {
   data () {
     return {
-      moveX: 0,
-      moveY: 0,
-      rotateY: 0,
-      rotateX: 0
     }
   },
   computed: {
-    position () {
-      let transform = `rotateX(${this.rotateX}deg) rotateY(${this.rotateY}deg)`
-      return {
-        top: this.moveY + 'px',
-        left: this.moveX + 'px',
-        '-webkit-transform': transform,
-        '-ms-transform': transform,
-        transform
-      }
-    }
   },
   methods: {
     openSeseame (event) {
       this.$refs.drawer.open()
-    },
-    move (event) {
-      const {width, height} = Utils.dom.viewport()
-      const {top, left} = Utils.event.position(event)
-      const halfH = height / 2
-      const halfW = width / 2
-
-      this.moveX = (left - halfW) / halfW * -moveForce
-      this.moveY = (top - halfH) / halfH * -moveForce
-      this.rotateY = (left / width * rotateForce * 2) - rotateForce
-      this.rotateX = -((top / height * rotateForce * 2) - rotateForce)
     }
   },
   mounted () {
     this.$nextTick(() => {
-      document.addEventListener('mousemove', this.move)
-      document.addEventListener('touchmove', this.move)
+      this.$router.replace('inventory')
     })
   },
   beforeDestroy () {
-    document.removeEventListener('mousemove', this.move)
-    document.removeEventListener('touchmove', this.move)
   }
 }
 </script>

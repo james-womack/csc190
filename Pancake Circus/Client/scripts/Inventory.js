@@ -17,53 +17,25 @@ let tableConfig = {
         noData: '<i>warning</i> Data there is not.',
         noDataAfterFiltering: '<i>warning</i> Results are no, search terms redefine you must.'
     }
-}
-
-let tableData = [
-    {
-        Name: "Eggs",
-        Location: "Shelf A1 Sauce",
-        AmtLeft: 20,
-        Vendor: "Vendor A"
-    },
-    {
-        Name: "Flour",
-        Location: "Shelf A2 Sauce",
-        AmtLeft: 15,
-        Vendor: "Vendor B"
-    },
-    {
-        Name: "Milk",
-        Location: "Shelf Siracha",
-        AmtLeft: 10,
-        Vendor: "Vendor A"
-    },
-    {
-        Name: "Cereal",
-        Location: "Shelf BBQ Sauce",
-        AmtLeft: 69,
-        Vendor: "Vender B"
-    },
-]
-
+};
 let tableColumns = [
     {
         label: 'Name',
-        field: 'Name',
+        field: 'name',
         width: '100px',
         filter: true,
         sort: 'string'
     },
     {
         label: 'Location',
-        field: 'Location',
+        field: 'location',
         width: '80px',
         filter: true,
         sort: 'string'
     },
     {
         label: 'Amount Left',
-        field: 'AmtLeft',
+        field: 'amount',
         width: '80px',
         filter: true,
         sort: 'number'
@@ -71,27 +43,54 @@ let tableColumns = [
     },
     {
         label: 'Vendor',
-        field: 'Vendor',
+        field: 'vendor',
         width: '150px',
         filter: true,
         sort: 'string'
     }
-]
-
+];
 export default {
-  data() {
-      return {
-          table: tableData,
-          config: tableConfig,
-          columns: tableColumns
-      }
-  },
-  methods: {
-      refresh (done) {
-          Toast.create('You hit the refresh button')
-          this.timeout = setTimeout(() => {
-              done()
-          }, 5000)
-      }
-  }
+    data() {
+        return {
+            table: [],
+            config: tableConfig,
+            columns: tableColumns
+        };
+    },
+    methods: {
+        refresh (done) {
+            this.getNewData().then(obj => {
+                this.table = toTableFormat(obj);
+                done();
+            });
+        },
+        getNewData() {
+            return this.$http.get('http://localhost:5000/api/stock').then(response => {
+                    const resp = response.json();
+                    console.log(response.status);
+                    return resp;
+                },
+                err => {
+                    log(err);
+                });
+        },
+        toTableFormat(obj) {
+            const newData = [];
+            for (let val of obj) {
+                newData.push({
+                    name: val.item.name,
+                    amount: val.amount,
+                    location: val.location,
+                    vendor: val.vendor.name
+                });
+            }
+            return newData;
+        }
+    },
+    mounted() {
+        const resp = this.getNewData();
+        resp.then(obj => {
+            this.table = this.toTableFormat(obj);
+        });
+    }
 }

@@ -9,8 +9,16 @@ namespace PancakeCircus.Models.SQL
     {
         public string OrderId { get; set; }
         public DateTime OrderDate { get; set; }
-        public bool Fulfilled { get; set; }
+        public OrderStatus Status { get; set; }
         public List<OrderItem> OrderItems { get; set; }
             
+    }
+
+    public enum OrderStatus
+    {
+        None,
+        Fulfilled,
+        Denied,
+        Approved
     }
 }

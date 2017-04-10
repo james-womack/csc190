@@ -15,7 +15,7 @@ namespace PancakeCircus.Models.SQL
         public Vendor Vendor { get; set; }
 
         public int Price { get; set; }
-        public string sku { get; set; }
-        public double packageAmount { get; set; }
+        public string SKU { get; set; }
+        public double PackageAmount { get; set; }
     }
 }
