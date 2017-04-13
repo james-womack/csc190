@@ -60,5 +60,18 @@ namespace PancakeCircus.Controllers.Api
         {
             return Ok();
         }
+
+        [HttpDelete]
+        public IActionResult DeleteStock([FromBody] List<DeleteStockRequest> stockToDelete)
+        {
+            var itemIds = stockToDelete.Select(x => x.ItemId).ToList();
+            var vendorIds = stockToDelete.Select(x => x.VendorId).ToList();
+
+            // Delete all of the stocks in the request
+            var stocks = Context.Stocks.Where(x => itemIds.Contains(x.ItemId) && vendorIds.Contains(x.VendorId));
+            Context.Stocks.RemoveRange(stocks);
+
+            return Ok();
+        }
     }
 }
