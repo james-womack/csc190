@@ -101,6 +101,9 @@ export default {
             })
             
         },
+        editRows(props) {
+            
+        },
         refresh (done) {
             this.getNewData().then(obj => {
                 this.table = toTableFormat(obj);
