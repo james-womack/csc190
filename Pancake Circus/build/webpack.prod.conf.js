@@ -8,7 +8,8 @@
   ExtractTextPlugin = require('extract-text-webpack-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin')
 
-var webpackConfig = merge(baseWebpackConfig, {
+var webpackConfig = merge(baseWebpackConfig,
+{
   module: {
     rules: cssUtils.styleRules({
       sourceMap: config.build.productionSourceMap,
