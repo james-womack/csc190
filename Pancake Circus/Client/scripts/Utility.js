@@ -1,4 +1,6 @@
-﻿function Clone (obj) {
+﻿import Vue from 'vue'
+
+function Clone (obj) {
   var copy
 
   // Handle the 3 simple types, and null or undefined
@@ -36,4 +38,10 @@
   throw new Error("Unable to copy obj! Its type isn't supported.")
 }
 
-export { Clone }
+function ResolveRoute (route) {
+  return `http://localhost:5000/api${route.startsWith('/') ? '' : '/'}${route}`
+}
+
+var GlobalBus = new Vue()
+
+export { Clone, ResolveRoute, GlobalBus }

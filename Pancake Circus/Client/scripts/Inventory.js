@@ -1,5 +1,5 @@
 ﻿import { Platform, Utils, Toast, Dialog } from 'quasar'
-import { Clone } from '../scripts/Utility'
+import { Clone, ResolveRoute, GlobalBus } from '../scripts/Utility'
 
 let tableConfig = {
   rowHeight: '50px',
@@ -56,10 +56,45 @@ export default {
       table: [],
       config: tableConfig,
       columns: tableColumns,
-      edits: []
+      edits: {
+        delete: [],
+        change: []
+      }
     };
   },
   methods: {
+    commitEdits() {
+      let deleteOp = Promise.resolve();
+      let editOp = Promise.resolve();
+
+      // Resolve all of the requests to the server
+      if (this.edits.delete.length !== 0) {
+        deleteOp = this.$http.delete(ResolveRoute('stock'), { body: this.edits.delete })
+      }
+      if (this.edits.change.length !== 0) {
+        editOp = this.$http.patch(ResolveRoute('stock'), this.edits.change)
+      }
+
+      // Show toast for success/failure
+      const finish = Promise.all([deleteOp, editOp]);
+      finish.then(resp => {
+          Toast.create('Changes Saved!')
+          this.edits.change = []
+          this.edits.delete = []
+        },
+        e => {
+          Toast.create('Failed to save changes...')
+          console.log(e)
+        })
+    },
+    addItem() {
+      GlobalBus.$emit('newStock')
+    },
+    discardEdits() {
+      this.edits.change = []
+      this.edits.delete = []
+      this.refresh(() => {})
+    },
     deleteRows(props) {
       let str = '';
       const propsToDelete = [];
@@ -79,17 +114,31 @@ export default {
           {
             label: 'OK',
             handler() {
-              const resp = _this.$http.delete('http://localhost:5000/api/stock', { body: propsToDelete });
-              resp.then(r => {
-                  props.rows.forEach(row => {
-                    _this.table.splice(row.index, 1)
-                    console.log(row)
-                  })
-                  Toast.create(`Deleted ${propsToDelete.length} rows...`)
-                },
-                e => {
-                  Toast.create('Failed to delete rows...')
+              propsToDelete.forEach(x => {
+                _this.edits.delete.push(x)
+              })
+
+              props.rows.forEach(row => {
+                // Grab a change in the edits array
+                // if it does exist, then delete it
+                let existEdit = -1
+
+                _this.edits.change.forEach((x, i) => {
+                  console.log(x)
+                  console.log(row)
+                  if (x.vendorId === row.data.vendorId && x.itemId === row.data.itemId) {
+                    existEdit = i;
+                  }
                 })
+                if (existEdit > -1) {
+                  _this.edits.change.splice(existEdit, 1)
+                }
+
+                // Delete from the table
+                _this.table.splice(row.index, 1)
+              })
+              Toast.create(`Deleted ${propsToDelete.length} rows...`)
+
             }
           },
           {
@@ -102,27 +151,52 @@ export default {
       })
 
     },
-    editRows(props) {
+    refresh(done) {
+      // See if there are any pending changes
+      if (this.edits.change.length === 0 && this.edits.delete.length === 0) {
+        // No pending changes, refresh the inventory
+        this.getNewData().then(obj => {
+          this.table = this.toTableFormat(obj);
+          done();
+        });
+      } else {
+        // Warn user that they'll loose their changes
+        const _this = this;
+        Dialog.create({
+          title: 'Warning',
+          message:
+            'This will discard any edits you\'ve made, are you sure?\nYou can save them using the save button in the lower right',
+          buttons: [
+            'Cancel',
+            {
+              label: 'Ok',
+              handler(data) {
+                _this.edits.change = []
+                _this.edits.delete = []
 
-    },
-    refresh (done) {
-      this.getNewData().then(obj => {
-        this.table = toTableFormat(obj);
-        done();
-      });
+                _this.getNewData().then(obj => {
+                  _this.table = _this.toTableFormat(obj)
+                  done()
+                });
+              }
+            }
+          ]
+        })
+      }
     },
     getNewData() {
-      return this.$http.get('http://localhost:5000/api/stock').then(response => {
-          const resp = response.json();
-          console.log(response.status);
-          return resp;
+      // Gets new stock info from the server
+      return this.$http.get(ResolveRoute('stock')).then(response => {
+          const resp = response.json()
+          console.log(response.status)
+          return resp
         },
         err => {
-          log(err);
+          log(err)
         });
     },
     toTableFormat(obj) {
-      const newData = [];
+      const newData = []
       for (let val of obj) {
         newData.push({
           name: val.item.name,
@@ -134,10 +208,10 @@ export default {
           itemId: val.item.id
         });
       }
-      return newData;
+      return newData
     },
     editAmount(row) {
-      const _this = this;
+      const _this = this
       Dialog.create({
         title: 'Enter Amount',
         form: {
@@ -152,8 +226,15 @@ export default {
           {
             label: 'Ok',
             handler(data) {
-              console.log(row)
-              console.log(_this)
+              _this.addChange({
+                name: row.name,
+                amount: data.amt,
+                location: row.location,
+                minAmount: row.minAmount,
+                vendor: row.vendor,
+                vendorId: row.vendorId,
+                itemId: row.itemId
+              })
             }
           }
         ]
@@ -161,12 +242,46 @@ export default {
     },
     editLocation(row) {
       console.log(`${row.location}`)
+    },
+    addChange(data) {
+      let existingEdit = -1
+      let tableIndex = null
+
+      // Search for any existing edits
+      this.edits.change.forEach((x, i) => {
+        if (x.itemId === data.itemId && x.vendorId === data.vendorId)
+          existingEdit = i
+      })
+
+      // Search for existing entry on table
+      this.table.forEach((x, i) => {
+        if (x.itemId === data.itemId && x.vendorId === data.vendorId)
+          tableIndex = i
+      })
+
+      // Add the edit if needed
+      if (existingEdit !== -1) {
+        this.edits.change.splice(existingEdit, 1)
+      }
+
+      this.edits.change.push({
+        name: data.name,
+        amount: data.amt,
+        location: data.location,
+        minAmount: data.minAmount,
+        vendor: data.vendor,
+        vendorId: data.vendorId,
+        itemId: data.itemId
+      })
+
+      this.table[tableIndex].amount = data.amt
+      console.log(this.edits)
     }
   },
   mounted() {
     const resp = this.getNewData();
     resp.then(obj => {
-      this.table = this.toTableFormat(obj);
+      this.table = this.toTableFormat(obj)
     });
   }
 }

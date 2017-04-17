@@ -1,5 +1,20 @@
 ﻿<template>
   <div>
+    <q-fab class="absolute-bottom-right"
+           @click="commitEdits()"
+           classNames="primary"
+           active-icon="save"
+           direction="up"
+           v-show="edits.change.length !== 0 || edits.delete.length !== 0"
+           style="right: 14px; bottom: 14px;">
+      <q-small-fab class="red" @click.native="discardEdits()" icon="delete_forever"></q-small-fab>
+    </q-fab>
+    <button class="green circular absolute-bottom-right"
+           @click="addItem()"
+           v-show="edits.change.length === 0 && edits.delete.length === 0"
+           id="addButton">
+           <i>add</i>
+    </button>
     <div class="layout-padding">
       <q-data-table :data="table" :config="config" :columns="columns" @refresh="refresh">
         <template slot="col-location" scope="cell">
@@ -22,6 +37,13 @@
     </div>
   </div>
 </template>
+
+<style>
+  #addButton {
+    right: 18px;
+    bottom: 18px;
+  }
+</style>
 
 <script src="../scripts/Inventory.js">
 </script>
