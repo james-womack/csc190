@@ -266,7 +266,7 @@ export default {
 
       this.edits.change.push({
         name: data.name,
-        amount: data.amt,
+        amount: data.amount,
         location: data.location,
         minAmount: data.minAmount,
         vendor: data.vendor,
@@ -274,7 +274,10 @@ export default {
         itemId: data.itemId
       })
 
-      this.table[tableIndex].amount = data.amt
+      console.log(tableIndex)
+      console.log(this.table[tableIndex])
+
+      this.table[tableIndex].amount = data.amount
       console.log(this.edits)
     }
   },
