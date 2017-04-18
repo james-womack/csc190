@@ -9,14 +9,14 @@
   FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin'),
   path = require('path')
 
-module.exports = merge(baseWebpackConfig, {
- 
+module.exports = merge(baseWebpackConfig,
+{
   module: {
     rules: cssUtils.styleRules({
       sourceMap: config.dev.cssSourceMap,
       postcss: true
     })
-  },/*
+  }, /*
   watch: true,
   watchOptions: {
       aggregateTimeout: 300,
@@ -24,9 +24,9 @@ module.exports = merge(baseWebpackConfig, {
       poll: 1000
   },*/
   plugins: [
-      new webpack.SourceMapDevToolPlugin({
-          filename: '[file].map',
-          moduleFilenameTemplate: path.relative('../wwwroot/dist/', '[resourcePath]')
-   })
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[file].map',
+      moduleFilenameTemplate: path.relative('../wwwroot/dist/', '[resourcePath]')
+    })
   ]
 })

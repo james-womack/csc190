@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using PancakeCircus.Models.SQL;
 
@@ -9,44 +6,41 @@ using PancakeCircus.Models.SQL;
 
 namespace PancakeCircus.Controllers.Api
 {
-    [Route("api/[controller]")]
-    public class OrdersController : Controller
+  [Route("api/[controller]")]
+  public class OrdersController : Controller
+  {
+    // Not done
+    [HttpPost("new")]
+    public IActionResult PostOrders([FromBody] OrderItem order)
     {
-        // Not done
-        [HttpPost("new")]
-        public IActionResult PostOrders([FromBody]OrderItem order)
-        {
-            return Json(new List<OrderItem>());
-        }
-        [HttpGet("copy/{itemId}")]
-        public IActionResult GetOrder(string itemId)
-        {
-            bool notfound = false;
-            if (notfound)
-            {
-                return NotFound();
-            }
-            return Ok();
-        }
-        [HttpGet("accept/{orderId}")]
-        public IActionResult GetAcceptOrder(string orderId)
-        {
-            bool notfound = false;
-            if (notfound)
-            {
-                return NotFound();
-            }
-            return Ok();
-        }
-        [HttpGet("deny/{orderId}")]
-        public IActionResult GetDenyOrder(string orderId)
-        {
-            bool notfound = false;
-            if (notfound)
-            {
-                return NotFound();
-            }
-            return Ok();
-        }
+      return Json(new List<OrderItem>());
     }
+
+    [HttpGet("copy/{itemId}")]
+    public IActionResult GetOrder(string itemId)
+    {
+      var notfound = false;
+      if (notfound)
+        return NotFound();
+      return Ok();
     }
+
+    [HttpGet("accept/{orderId}")]
+    public IActionResult GetAcceptOrder(string orderId)
+    {
+      var notfound = false;
+      if (notfound)
+        return NotFound();
+      return Ok();
+    }
+
+    [HttpGet("deny/{orderId}")]
+    public IActionResult GetDenyOrder(string orderId)
+    {
+      var notfound = false;
+      if (notfound)
+        return NotFound();
+      return Ok();
+    }
+  }
+}
