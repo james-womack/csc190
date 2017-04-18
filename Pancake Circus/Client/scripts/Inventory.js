@@ -165,7 +165,7 @@ export default {
         Dialog.create({
           title: 'Warning',
           message:
-            'This will discard any edits you\'ve made, are you sure?\nYou can save them using the save button in the lower right',
+            "This will discard any edits you've made, are you sure?\nYou can save them using the save button in the lower right",
           buttons: [
             'Cancel',
             {

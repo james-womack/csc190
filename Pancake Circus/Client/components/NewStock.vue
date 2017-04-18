@@ -6,10 +6,14 @@
                   <q-step title="Select Vendors" :ready="vendorReady">
                     Select what vendors you'll want to add stock from manually
                     <br/><br/>
-                    <div class="list">
+                    <!-- Show progress bar if we are still loading vendors -->
+                    <q-progress v-if="isLoadingVendors && !serverError" class="indeterminate"></q-progress>
+                    <q-progress v-else-if="serverError" class="indeterminate error"></q-progress>
+                    <!-- Otherwise show list of vendors-->
+                    <div class="list" v-else>
                         <label class="item" v-for="(vendor, index) in vendors">
                             <div class="item-primary">
-                                <q-checkbox v-model="selectedVendors[0]"></q-checkbox>
+                                <q-checkbox v-model="selectedVendors[index]"></q-checkbox>
                             </div>
                             <div class="item-content">
                                 <div>{{ vendor.name }}</div>

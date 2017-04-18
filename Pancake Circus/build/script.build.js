@@ -36,5 +36,5 @@ webpack(webpackConfig,
       `\n Build complete with "${env.platform.theme.bold}" theme in ${'"/wwwroot/dist"'.bold} folder.\n`).cyan)
 
     console.log(' Built files are meant to be served over an HTTP server.'.bold)
-    console.log(' Opening index.html over file:// won\'t work.'.bold)
+    console.log(" Opening index.html over file:// won't work.".bold)
   })

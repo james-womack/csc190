@@ -49,7 +49,7 @@ namespace PancakeCircus.Controllers
         // This doesn't count login failures towards account lockout
         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
         var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
-          lockoutOnFailure: false);
+          false);
         if (result.Succeeded)
         {
           _logger.LogInformation(1, "User logged in.");
@@ -90,7 +90,7 @@ namespace PancakeCircus.Controllers
           //var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
           //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
           //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-          await _signInManager.SignInAsync(user, isPersistent: false);
+          await _signInManager.SignInAsync(user, false);
           _logger.LogInformation(3, "User created a new account with password.");
           return RedirectToLocal(returnUrl);
         }
@@ -146,7 +146,7 @@ namespace PancakeCircus.Controllers
           result = await _userManager.AddLoginAsync(user, info);
           if (result.Succeeded)
           {
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _signInManager.SignInAsync(user, false);
             _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
             return RedirectToLocal(returnUrl);
           }

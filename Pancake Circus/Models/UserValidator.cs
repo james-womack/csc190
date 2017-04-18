@@ -8,9 +8,9 @@ namespace PancakeCircus.Models
 {
   public class UserValidator<TUser> : IUserValidator<TUser> where TUser : IdentityUser
   {
-    static readonly string theEmailPattern = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
-                                             + "@"
-                                             + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$";
+    private static readonly string theEmailPattern = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
+                                                     + "@"
+                                                     + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$";
 
     public Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user)
     {

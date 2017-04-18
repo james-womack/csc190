@@ -78,7 +78,7 @@ namespace IdentitySamples.Controllers
         var result = await _userManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
         if (result.Succeeded)
         {
-          await _signInManager.SignInAsync(user, isPersistent: false);
+          await _signInManager.SignInAsync(user, false);
           message = ManageMessageId.RemoveLoginSuccess;
         }
       }
@@ -117,7 +117,7 @@ namespace IdentitySamples.Controllers
       if (user != null)
       {
         await _userManager.SetTwoFactorEnabledAsync(user, true);
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await _signInManager.SignInAsync(user, false);
         _logger.LogInformation(1, "User enabled two-factor authentication.");
       }
       return RedirectToAction(nameof(Index), "Manage");
@@ -133,7 +133,7 @@ namespace IdentitySamples.Controllers
       if (user != null)
       {
         await _userManager.SetTwoFactorEnabledAsync(user, false);
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await _signInManager.SignInAsync(user, false);
         _logger.LogInformation(2, "User disabled two-factor authentication.");
       }
       return RedirectToAction(nameof(Index), "Manage");
@@ -163,7 +163,7 @@ namespace IdentitySamples.Controllers
         var result = await _userManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
         if (result.Succeeded)
         {
-          await _signInManager.SignInAsync(user, isPersistent: false);
+          await _signInManager.SignInAsync(user, false);
           return RedirectToAction(nameof(Index), new {Message = ManageMessageId.AddPhoneSuccess});
         }
       }
@@ -184,7 +184,7 @@ namespace IdentitySamples.Controllers
         var result = await _userManager.SetPhoneNumberAsync(user, null);
         if (result.Succeeded)
         {
-          await _signInManager.SignInAsync(user, isPersistent: false);
+          await _signInManager.SignInAsync(user, false);
           return RedirectToAction(nameof(Index), new {Message = ManageMessageId.RemovePhoneSuccess});
         }
       }
@@ -213,7 +213,7 @@ namespace IdentitySamples.Controllers
         var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
         if (result.Succeeded)
         {
-          await _signInManager.SignInAsync(user, isPersistent: false);
+          await _signInManager.SignInAsync(user, false);
           _logger.LogInformation(3, "User changed their password successfully.");
           return RedirectToAction(nameof(Index), new {Message = ManageMessageId.ChangePasswordSuccess});
         }
@@ -246,7 +246,7 @@ namespace IdentitySamples.Controllers
         var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
         if (result.Succeeded)
         {
-          await _signInManager.SignInAsync(user, isPersistent: false);
+          await _signInManager.SignInAsync(user, false);
           return RedirectToAction(nameof(Index), new {Message = ManageMessageId.SetPasswordSuccess});
         }
         AddErrors(result);

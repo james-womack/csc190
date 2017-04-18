@@ -18,8 +18,8 @@ namespace PancakeCircus
     {
       var builder = new ConfigurationBuilder()
         .SetBasePath(env.ContentRootPath)
-        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+        .AddJsonFile("appsettings.json", true, true)
+        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
         .AddEnvironmentVariables();
       if (env.IsDevelopment())
         builder.AddUserSecrets<Startup>();
@@ -79,12 +79,12 @@ namespace PancakeCircus
       app.UseMvc(routes =>
       {
         routes.MapRoute(
-          name: "default",
-          template: "{controller=Home}/{action=Index}/{id?}");
+          "default",
+          "{controller=Home}/{action=Index}/{id?}");
 
         routes.MapSpaFallbackRoute(
-          name: "spa-fallback",
-          defaults: new {controller = "Home", action = "Index"});
+          "spa-fallback",
+          new {controller = "Home", action = "Index"});
       });
     }
   }
