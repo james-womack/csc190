@@ -1,4 +1,4 @@
-﻿import { Platform, Utils, Toast } from 'quasar'
+﻿import { Platform, Utils, Toast, Dialog } from 'quasar'
 
 let tableConfig = {
     rowHeight: '50px',
@@ -58,6 +58,52 @@ export default {
         };
     },
     methods: {
+        deleteRows(props) {
+            let str = '';
+            let propsToDelete = []
+            let _this = this;
+            props.rows.forEach(row => {
+                str += `${row.data.name}, `
+                propsToDelete.push({
+                    itemId: row.data.itemId,
+                    vendorId: row.data.vendorId
+                })
+            })
+            Dialog.create({
+                title: 'Confirm Deletion',
+                message: `This will delete these items from stock: [${str.substr(0, str.length - 2)}]`,
+                icon: 'warning',
+                buttons: [
+                    {
+                        label: 'OK',
+                        handler() {
+                            let resp = _this.$http.delete('http://localhost:5000/api/stock', { body: propsToDelete })
+                            resp.then(r => {
+                                props.rows.forEach(row => {
+                                    _this.table.splice(row.index, 1)
+                                    console.log(row)
+                                })
+                                Toast.create(`Deleted ${propsToDelete.length} rows...`)
+                            },
+                            e => {
+                                Toast.create('Failed to delete rows...')
+                            })
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        handler() {
+                            Toast.create('Cancelled...')
+                        }
+                    }
+
+                ]
+            })
+            
+        },
+        editRows(props) {
+            
+        },
         refresh (done) {
             this.getNewData().then(obj => {
                 this.table = toTableFormat(obj);
@@ -81,7 +127,9 @@ export default {
                     name: val.item.name,
                     amount: val.amount,
                     location: val.location,
-                    vendor: val.vendor.name
+                    vendor: val.vendor.name,
+                    vendorId: val.vendor.id,
+                    itemId: val.item.id
                 });
             }
             return newData;

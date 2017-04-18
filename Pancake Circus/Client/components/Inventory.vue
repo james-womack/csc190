@@ -5,6 +5,12 @@
         <template slot="col-source" scope="cell">
           <span class="label">{{ cell.data }}</span>
         </template>
+
+        <template slot="selection" scope="props">
+          <button class="primary clear" @click="deleteRows(props)">
+            <i>delete</i>
+          </button>
+        </template>
       </q-data-table>
     </div>
   </div>
