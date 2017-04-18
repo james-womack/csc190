@@ -14,6 +14,11 @@ import router from './router'
 
 Vue.use(VueResource)
 Vue.use(Quasar) // Install Quasar Framework
+Vue.config.errorHandler = function (err, vm, info) {
+  console.log(err)
+  console.log(vm)
+  console.log(info)
+}
 
 Quasar.start(() => {
   /* eslint-disable no-new */

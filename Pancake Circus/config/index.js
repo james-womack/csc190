@@ -11,7 +11,7 @@ module.exports = {
 
   // Progress Bar Webpack plugin format
   // https://github.com/clessg/progress-bar-webpack-plugin#options
-  progressFormat: ' [:bar] ' + ':percent'.bold + ' (:msg)',
+  progressFormat: ` [:bar] ${':percent'.bold} (:msg)`,
 
   // Default theme to build with ('ios' or 'mat')
   defaultTheme: 'mat',
