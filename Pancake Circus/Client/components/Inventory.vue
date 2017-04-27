@@ -6,10 +6,11 @@
            active-icon="save"
            direction="up"
            v-show="edits.change.length !== 0 || edits.delete.length !== 0"
-           style="right: 14px; bottom: 14px;">
+           style="right: 14px; bottom: 14px; z-index: 99;">
       <q-small-fab class="red" @click.native="discardEdits()" icon="delete_forever"></q-small-fab>
     </q-fab>
-    <button class="green circular absolute-bottom-right"
+    <button class="absolute-bottom-right green circular"
+            style="z-index: 99"
            @click="addItem()"
            v-show="edits.change.length === 0 && edits.delete.length === 0"
            id="addButton">

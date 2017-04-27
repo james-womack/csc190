@@ -3,8 +3,8 @@
         <div class="layout-padding">
             <q-transition name="slide">
                 <q-stepper @finish="addStock()" ref="addStock" v-show="!finished">
-                  <q-step title="Select Vendors" :ready="vendorReady">
-                    Select what vendors you'll want to add stock from manually
+                  <q-step title="Select Vendors" :ready="selectedVendorsAmt > 0">
+                    Select what vendors you'll want to add stock from manually, or <a @click="addVendor()">add one</a> 
                     <br/><br/>
                     <!-- Show progress bar if we are still loading vendors -->
                     <q-progress v-if="isLoadingVendors && !serverError" class="indeterminate"></q-progress>
@@ -13,7 +13,7 @@
                     <div class="list" v-else>
                         <label class="item" v-for="(vendor, index) in vendors">
                             <div class="item-primary">
-                                <q-checkbox v-model="selectedVendors[index]"></q-checkbox>
+                                <q-checkbox @input="selectVendor(index)" v-model="selectedVendors[index]"></q-checkbox>
                             </div>
                             <div class="item-content">
                                 <div>{{ vendor.name }}</div>

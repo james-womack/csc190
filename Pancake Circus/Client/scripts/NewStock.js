@@ -1,4 +1,6 @@
 ﻿import { ResolveRoute } from '../scripts/Utility'
+import { createVendor } from '../scripts/Dialogs'
+import { Toast } from 'quasar'
 
 export default {
   data() {
@@ -9,6 +11,8 @@ export default {
       items: [],
       selectedItems: { 0: false },
       selectedVendors: { 0: false },
+      selectedVendorsAmt: 0,
+      vendorsReady: false,
       // Map for itemName -> itemId
       itemsMap: {},
       // Map for vendorName -> vendorId
@@ -36,18 +40,6 @@ export default {
       }
 
       return true
-    },
-    // Sees if a vendor has been selected
-    vendorReady() {
-      let i = 0
-
-      for (i = 0; i < this.vendors.length; ++i) {
-        if (this.selectedVendors[i]) {
-          return true
-        }
-      }
-
-      return false
     }
   },
   mounted() {
@@ -67,8 +59,21 @@ export default {
     })
   },
   methods: {
+    addVendor() {
+      createVendor().then(data => {
+      }, err => {
+        Toast.create('User Cancelled')
+      })
+    },
     addStock () {
 
+    },
+    selectVendor(index) {
+      if (this.selectedVendors[index] === false) {
+        this.selectedVendorsAmt -= 1
+      } else {
+        this.selectedVendorsAmt += 1
+      }
     }
   }
 }
