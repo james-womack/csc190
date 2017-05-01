@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PancakeCircus.Data;
 using PancakeCircus.Models.Client;
 using PancakeCircus.Models.SQL;
@@ -13,11 +15,15 @@ namespace PancakeCircus.Controllers.Api
   [Route("api/[controller]")]
   public class ProductsController : Controller
   {
-    public ApplicationDbContext Context { get; }
-    public ProductsController(ApplicationDbContext context)
+    public ProductsController(ApplicationDbContext context, ILoggerFactory factory)
     {
       Context = context;
+      Logger = factory.CreateLogger(typeof(ProductsController));
     }
+
+    public ApplicationDbContext Context { get; }
+    public ILogger Logger { get; }
+
     [HttpPut]
     public IActionResult AddProduct([FromBody] Product product)
     {
@@ -50,8 +56,25 @@ namespace PancakeCircus.Controllers.Api
         where prod.VendorId == id
         join item in Context.Items on prod.ItemId equals item.ItemId
         select new ClientProduct(prod, item, vendor);
-      
+
       return Json(vendorProducts);
+    }
+
+    [HttpPost("fromVendors")]
+    public IActionResult GetAllProducts([FromBody] List<string> vendors)
+    {
+      var products = Context.Vendors.Include(x => x.Products)
+        .ThenInclude(x => x.Item)
+        .Include(x => x.Products)
+        .ThenInclude(x => x.Vendor)
+        .Where(x => vendors.Contains(x.VendorId))
+        .ToList()
+        .SelectMany(x => x.Products)
+        .Select(x => new ClientProduct(x, x.Item, x.Vendor))
+        .ToList();
+
+      Logger.LogInformation($"Number of products: {products.Count}");
+      return Json(products);
     }
 
     //Dont know if this is how you do the import part

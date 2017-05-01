@@ -10,23 +10,23 @@
   path = require('path')
 
 module.exports = merge(baseWebpackConfig,
-{
-  module: {
-    rules: cssUtils.styleRules({
-      sourceMap: config.dev.cssSourceMap,
-      postcss: true
-    })
-  }, /*
+  {
+    module: {
+      rules: cssUtils.styleRules({
+        sourceMap: config.dev.cssSourceMap,
+        postcss: true
+      })
+    }, /*
   watch: true,
   watchOptions: {
       aggregateTimeout: 300,
       ignored: /node_modules/,
       poll: 1000
   },*/
-  plugins: [
-    new webpack.SourceMapDevToolPlugin({
-      filename: '[file].map',
-      moduleFilenameTemplate: path.relative('../wwwroot/dist/', '[resourcePath]')
-    })
-  ]
-})
+    plugins: [
+      new webpack.SourceMapDevToolPlugin({
+        filename: '[file].map',
+        moduleFilenameTemplate: path.relative('../wwwroot/dist/', '[resourcePath]')
+      })
+    ]
+  })
