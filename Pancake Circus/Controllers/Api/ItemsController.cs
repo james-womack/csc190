@@ -11,16 +11,25 @@ namespace PancakeCircus.Controllers.Api
   [Route("api/[controller]")]
   public class ItemsController : Controller
   {
-    public ApplicationDbContext Context { get; }
-
     public ItemsController(ApplicationDbContext context)
     {
       Context = context;
     }
 
+    public ApplicationDbContext Context { get; }
+
     [HttpPut]
-    public IActionResult AddItem([FromBody] Item item)
+    public IActionResult AddItem([FromBody] ClientItem item)
     {
+      // Add new item to the database
+      var newItem = new Item()
+      {
+        MinimumAmount = item.MinimumAmount,
+        Name = item.Name,
+        Units = item.Units
+      };
+      Context.Items.Add(newItem);
+      Context.SaveChanges();
       return Ok();
     }
 

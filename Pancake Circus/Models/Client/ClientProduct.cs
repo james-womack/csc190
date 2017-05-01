@@ -6,17 +6,17 @@ namespace PancakeCircus.Models.Client
   {
     public ClientProduct()
     {
-      
     }
 
     public ClientProduct(Product prod, Item item, Vendor vendor)
     {
-      this.SKU = prod.SKU;
-      this.Price = prod.Price;
-      this.PackageAmount = prod.PackageAmount;
-      this.Item = new ClientItem(item);
-      this.Vendor = new ClientVendor(vendor);
+      SKU = prod.SKU;
+      Price = prod.Price;
+      PackageAmount = prod.PackageAmount;
+      Item = new ClientItem(item);
+      Vendor = new ClientVendor(vendor);
     }
+
     public ClientItem Item { get; set; }
     public ClientVendor Vendor { get; set; }
     public string SKU { get; set; }

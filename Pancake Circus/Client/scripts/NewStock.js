@@ -103,7 +103,7 @@ export default {
       }
 
       // Get a list of only vendorIds
-      let vendorList = []
+      const vendorList = [];
       console.log(this.vendors)
       this.vendors.forEach(vendor => {
         vendorList.push(vendor.id)
@@ -111,17 +111,19 @@ export default {
       console.log(vendorList)
 
       prom.then(x => {
-        return this.$http.post(ResolveRoute('products/fromVendors'), vendorList)
-      }, err => {
-        Toast.create('Failed to load items')
-        console.log(err)
-      }).then(resp => {
-        // Get the json from product list
-        return resp.json()
-      }, err => {
-        Toast.create('Failed to load products')
-        console.log(err)
-      }).then(products => {
+          return this.$http.post(ResolveRoute('products/fromVendors'), vendorList)
+        },
+        err => {
+          Toast.create('Failed to load items')
+          console.log(err)
+        }).then(resp => {
+          // Get the json from product list
+          return resp.json()
+        },
+        err => {
+          Toast.create('Failed to load products')
+          console.log(err)
+        }).then(products => {
         // Load in vendors now and go to next step
         console.log(products)
       })
