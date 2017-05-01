@@ -34,6 +34,11 @@ function createVendor () {
           type: 'textbox',
           label: 'State',
           model: ''
+        },
+        country: {
+          type: 'textbox',
+          label: 'Country',
+          model: ''
         }
       },
       buttons: [

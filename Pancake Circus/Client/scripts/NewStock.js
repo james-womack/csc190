@@ -43,26 +43,38 @@ export default {
     }
   },
   mounted() {
-    this.$http.get(ResolveRoute('vendors')).then(resp => {
-      // Return the JSON form
-      return resp.json()
-    }, err => {
-      console.log(err);
-
-      // Tell them it errored out
-    }).then(val => {
-      this.selectedVendors = {}
-      for (let i = 0; i < val.length; ++i) {
-        this.selectedVendors[i] = false
-      }
-      this.vendors = val
-    })
+    this.reloadVendors()
   },
   methods: {
+    reloadVendors() {
+      return this.$http.get(ResolveRoute('vendors')).then(resp => {
+          // Return the JSON form
+          return resp.json()
+        },
+        err => {
+          console.log(err);
+
+          // Tell them it errored out
+          this.serverError = true
+        }).then(val => {
+        this.selectedVendors = {}
+        for (let i = 0; i < val.length; ++i) {
+          this.selectedVendors[i] = false
+        }
+        this.vendors = val
+      })
+    },
     addVendor() {
       createVendor().then(data => {
-      }, err => {
-        Toast.create('User Cancelled')
+          return this.$http.put(ResolveRoute('vendors'), data)
+        },
+        err => {
+          Toast.create('User Cancelled')
+        }).then(resp => {
+        console.log('Added Vendor')
+        return this.reloadVendors()
+      }).then(x => {
+        console.log('Reloaded vendors')
       })
     },
     addStock () {
@@ -74,6 +86,45 @@ export default {
       } else {
         this.selectedVendorsAmt += 1
       }
+    },
+    loadProducts (next) {
+      // Check to see if all vendors have an ID
+      let needToLoadVendors = false
+      this.vendors.forEach(x => {
+        if (x.vendorId === undefined || x.vendorId === null) {
+          needToLoadVendors = true
+        }
+      })
+
+      let prom = Promise.resolve()
+      if (needToLoadVendors) {
+        // Load vendors
+        prom = this.reloadVendors()
+      }
+
+      // Get a list of only vendorIds
+      let vendorList = []
+      console.log(this.vendors)
+      this.vendors.forEach(vendor => {
+        vendorList.push(vendor.id)
+      })
+      console.log(vendorList)
+
+      prom.then(x => {
+        return this.$http.post(ResolveRoute('products/fromVendors'), vendorList)
+      }, err => {
+        Toast.create('Failed to load items')
+        console.log(err)
+      }).then(resp => {
+        // Get the json from product list
+        return resp.json()
+      }, err => {
+        Toast.create('Failed to load products')
+        console.log(err)
+      }).then(products => {
+        // Load in vendors now and go to next step
+        console.log(products)
+      })
     }
   }
 }
