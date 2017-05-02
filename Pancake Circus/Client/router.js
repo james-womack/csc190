@@ -19,6 +19,7 @@ export default new VueRouter({
    * If switching back to default "hash" mode, don't forget to set the
    * build publicPath back to '' so Cordova builds work again.
    */
+
   routes: [
     {
       path: '/',
@@ -28,6 +29,8 @@ export default new VueRouter({
         { path: 'vendors', component: load('Vendors') },
         { path: 'manage', component: load('Manage') },
         { path: 'inventory', component: load('Inventory') },
+        { path: 'vendorimport', component: load('VendorImport') },
+        { path: 'login', component: load('Login') },
         { path: 'newstock', component: load('NewStock') }
       ]
     }, // Default
