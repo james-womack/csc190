@@ -10,14 +10,9 @@
   <link rel="stylesheet" asp-href-include="~/dist/**/*.css"/>
 </head>
 <body>
-  @RenderBody()
-  
-  @RenderSection("Scripts", required: false)
-  <script asp-src-include="~/dist/js/vendor.js"></script>
+@RenderBody()
+
+@RenderSection("Scripts", false)
+<script asp-src-include="~/dist/js/vendor.js"></script>
 </body>
 </html>
-
-
-
-    
-

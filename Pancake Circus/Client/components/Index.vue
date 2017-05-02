@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import { GlobalBus } from '../scripts/Utility'
+
 export default {
   data () {
     return {
@@ -64,6 +66,11 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.$router.replace('inventory')
+      GlobalBus.$off('newStock')
+      let _this = this
+      GlobalBus.$on('newStock', function () {
+        _this.$router.push('newstock')
+      })
     })
   },
   beforeDestroy () {

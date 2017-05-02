@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PancakeCircus.Data;
@@ -15,51 +13,54 @@ namespace PancakeCircus.Controllers.Api
   [Route("api/[controller]")]
   public class StockController : Controller
   {
-    public ApplicationDbContext Context { get; }
     public StockController(ApplicationDbContext context)
     {
       Context = context;
     }
+
+    public ApplicationDbContext Context { get; }
+
     [HttpGet("current/{page}")]
     public IActionResult GetStock(int page)
     {
       return Json(new List<Stock>());
     }
+
     [HttpGet("vendor/{vendorId}")]
     public IActionResult GetStock(string vendorId)
     {
-      bool notFound = false;
+      var notFound = false;
       if (notFound)
-      {
         return NotFound();
-      }
       return Json(new List<Stock>());
     }
+
     [HttpGet("item/{itemId}")]
     public IActionResult GetItemStock(string itemId)
     {
-      bool notfound = false;
+      var notfound = false;
       if (notfound)
-      {
         return NotFound();
-      }
       return Json(new List<Stock>());
     }
+
     [HttpGet("low")]
     public IActionResult GetLowStock()
     {
       return Json(new List<Stock>());
     }
+
     [HttpGet]
     public IActionResult GetStock()
     {
       var stocks = Context.Stocks.Include(x => x.Item).Include(x => x.Vendor).ToList().Select(s => new ClientStock(s));
       return Json(stocks);
     }
+
     [HttpPatch]
-    public IActionResult PatchStock([FromBody]List<PatchStockRequest> stock)
+    public IActionResult PatchStock([FromBody] List<PatchStockRequest> stock)
     {
-      var changes = stock.ToDictionary(k => k.ItemId + k.VendorId, e => new { Amount = e.Amount, Location = e.Location });
+      var changes = stock.ToDictionary(k => k.ItemId + k.VendorId, e => new {e.Amount, e.Location});
       var itemids = new List<string>();
       var vendorids = new List<string>();
       foreach (var s in stock)

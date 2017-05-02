@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using PancakeCircus.Data;
 using PancakeCircus.Models.Client;
 using PancakeCircus.Models.SQL;
 
@@ -10,22 +8,47 @@ using PancakeCircus.Models.SQL;
 
 namespace PancakeCircus.Controllers.Api
 {
-    [Route("api/[controller]")]
-    public class ItemsController : Controller
+  [Route("api/[controller]")]
+  public class ItemsController : Controller
+  {
+    public ItemsController(ApplicationDbContext context)
     {
-        [HttpPut]
-        public IActionResult AddItem([FromBody]Item item) {
-            return Ok();
-        }
-        [HttpDelete]
-        public IActionResult DeleteItem([FromBody]Item item)
-        {
-            return Ok();
-        }
-        [HttpPatch]
-        public IActionResult PatchItem([FromBody]Item item)
-        {
-            return Ok();
-        }
+      Context = context;
     }
+
+    public ApplicationDbContext Context { get; }
+
+    [HttpPut]
+    public IActionResult AddItem([FromBody] ClientItem item)
+    {
+      // Add new item to the database
+      var newItem = new Item()
+      {
+        MinimumAmount = item.MinimumAmount,
+        Name = item.Name,
+        Units = item.Units
+      };
+      Context.Items.Add(newItem);
+      Context.SaveChanges();
+      return Ok();
+    }
+
+    [HttpDelete]
+    public IActionResult DeleteItem([FromBody] Item item)
+    {
+      return Ok();
+    }
+
+    [HttpPatch]
+    public IActionResult PatchItem([FromBody] Item item)
+    {
+      return Ok();
+    }
+
+    [HttpGet]
+    public IActionResult GetItems()
+    {
+      return Json(Context.Items.ToList().Select(x => new ClientItem(x)));
+    }
+  }
 }

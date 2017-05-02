@@ -2,11 +2,11 @@
 
 namespace PancakeCircus.Controllers
 {
-    public class HomeController : Controller
+  public class HomeController : Controller
+  {
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+      return View();
     }
+  }
 }
