@@ -3,7 +3,7 @@
     <div class="layout-padding">
       <div class="card" style="max-width: 500px">
         <div class="card-title">
-          Login/Register
+          Login
         </div>
         <div class="card-content">
 
@@ -17,6 +17,19 @@
                   <input type="password" v-model="password">
             </div>
           </div>
+          
+        </div>
+      </div>
+
+
+
+
+
+      <div class="card" style="max-width: 500px">
+        <div class="card-title">
+          Register
+        </div>
+        <div class="card-content">
 
           <div>
             <div class="layout-padding">
@@ -30,12 +43,16 @@
                       <small>Password</small>
                       <input type="password" v-model="password">
                     </br>
-                    
-            </div>
+
+                  </div>
           </div>
-          
+
         </div>
       </div>
+      
+      
+      
+      
     </div>
   </div>
 </template>
