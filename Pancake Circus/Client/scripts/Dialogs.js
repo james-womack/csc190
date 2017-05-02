@@ -1,5 +1,6 @@
 ﻿import { Dialog } from 'quasar'
 
+// Creates a vendor using a dialog
 function createVendor () {
   return new Promise(function (resolve, reject) {
     Dialog.create({
@@ -59,4 +60,8 @@ function createVendor () {
   })
 }
 
-export { createVendor }
+// Create new stock
+function createStock (items, vendors) {
+}
+
+export { createVendor, createStock }
