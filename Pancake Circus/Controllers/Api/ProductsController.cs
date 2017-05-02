@@ -37,10 +37,20 @@ namespace PancakeCircus.Controllers.Api
     }
 
     [HttpDelete]
-    public IActionResult DeleteProduct([FromBody] Product product)
+    public IActionResult DeleteProduct([FromBody]List<DeleteProductRequest> reqs)
     {
-      var notFound = false;
-      if (notFound) return NotFound();
+      var dbProd = reqs
+        .Select(x => Context.Products.FirstOrDefault(y => y.VendorId == x.VendorId && y.ItemId == x.ItemId))
+        .Where(x => x != null)
+        .ToList();
+      if (reqs.Count != dbProd.Count)
+      {
+        // We didnt find all products specified in the request
+        return NotFound($"Couldn't find all {reqs.Count} products in the request.");
+      }
+
+      Context.Products.RemoveRange(dbProd);
+      Context.SaveChanges();
       return Ok();
     }
 
