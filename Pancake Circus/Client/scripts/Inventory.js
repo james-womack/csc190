@@ -1,5 +1,6 @@
 ﻿import { Platform, Utils, Toast, Dialog } from 'quasar'
 import { Clone, ResolveRoute, GlobalBus } from '../scripts/Utility'
+import { createVendor, createItem } from '../scripts/Dialogs'
 
 // Configuration of table its self
 let tableConfig = {
@@ -160,10 +161,26 @@ export default {
 
     },
     addVendor() {
-      
+      createVendor().then(value => {
+        return this.$http.put(ResolveRoute('vendors'), value)
+      }, error => {
+        Toast.create('Cancelled')
+      }).then(value => {
+        Toast.create('Added vendor')
+      }, error => {
+        Toast.create('Error: Failed to add new vendor')
+      })
     },
     addItem() {
-      
+      createItem().then(value => {
+        return this.$http.put(ResolveRoute('items'), value)
+      }, error => {
+        Toast.create('Cancelled')
+      }).then(value => {
+        Toast.create('Added item') 
+      }, error => {
+        Toast.create('Error: Failed to add new item')
+      })
     },
     addStock() {
       console.log("Add stock")
