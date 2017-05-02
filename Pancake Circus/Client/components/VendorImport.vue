@@ -21,11 +21,11 @@
 </template>
 
 <script>
-  export default {
+export default {
   data () {
-  return {
-  search: ''
+    return {
+      search: ''
+    }
   }
-  }
-  }
+}
 </script>

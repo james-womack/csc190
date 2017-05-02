@@ -1,58 +1,35 @@
 ﻿<template>
   <div>
+
+    <q-tabs
+          :refs="$refs"
+          default-tab="loginTab"
+          class="primary shadow-1"
+          style="padding-top: 5px"
+        >
+      <q-tab name="loginTab" icon="person">Login</q-tab>
+      <q-tab name="registerTab" icon="person_add">Register</q-tab>
+    </q-tabs>
+
     <div class="layout-padding">
-      <div class="card" style="max-width: 500px">
-        <div class="card-title">
-          Login
-        </div>
-        <div class="card-content">
-
-          <div>
-            <div class="layout-padding">
-              <p class="caption">Login</p>
-              <small>Default:</small>
-              <input v-model="username">
-                <br>
-                  <small>Password:</small>
-                  <input type="password" v-model="password">
-            </div>
-          </div>
-          
-        </div>
+      <div ref="loginTab">
+        <p class="caption">Login:</p>
+        <input type="email" v-model="loginUsername" placeholder="Email"></input>
+        <br/>
+        <input type="password" v-model="loginPassword" placeholder="Password"></input>
+        <br/>
+        <button class="primary" @click="login()">Login</button>
       </div>
-
-
-
-
-
-      <div class="card" style="max-width: 500px">
-        <div class="card-title">
-          Register
-        </div>
-        <div class="card-content">
-
-          <div>
-            <div class="layout-padding">
-              <p class="caption">Register</p>
-              <small>Username:</small>
-              <input v-model="username">
-                <br>
-                  <small>Password:</small>
-                  <input type="password" v-model="password">
-                    <br>
-                      <small>Password</small>
-                      <input type="password" v-model="password">
-                    </br>
-
-                  </div>
-          </div>
-
-        </div>
+      <div ref="registerTab">
+        <p class="caption">Register:</p>
+        <input type="email" v-model="registerEmail" placeholder="Email"></input>
+        <br/>
+        <input type="password" placeholder="Password" v-model="registerPassword"></input>
+        <br/>
+        <input type="password" placeholder="Confirm Password" v-model="registerConfirmPassword"></input>
+        <br/>
+        <button class="primary" @click="register()">Register</button>
       </div>
-      
-      
-      
-      
     </div>
   </div>
 </template>
