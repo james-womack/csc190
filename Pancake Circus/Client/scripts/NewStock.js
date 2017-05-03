@@ -77,7 +77,7 @@ export default {
         console.log('Reloaded vendors')
       })
     },
-    addStock () {
+    addStock() {
 
     },
     selectVendor(index) {
@@ -87,7 +87,7 @@ export default {
         this.selectedVendorsAmt += 1
       }
     },
-    loadProducts (next) {
+    loadProducts(next) {
       // Check to see if all vendors have an ID
       let needToLoadVendors = false
       this.vendors.forEach(x => {
