@@ -78,7 +78,7 @@ export default {
           {
             label: 'OK',
             handler() {
-              const resp = _this.$http.delete('http://localhost:5000/api/stock', { body: propsToDelete });
+              const resp = _this.$http.delete(ResolveRoute('orders'), { body: propsToDelete });
               resp.then(r => {
                   props.rows.forEach(row => {
                     _this.table.splice(row.index, 1)
