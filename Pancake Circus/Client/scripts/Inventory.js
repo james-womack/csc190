@@ -1,4 +1,4 @@
-import { Platform, Utils, Toast, Dialog } from 'quasar'
+﻿import { Platform, Utils, Toast, Dialog } from 'quasar'
 import { Clone, ResolveRoute, GlobalBus } from '../scripts/Utility'
 
 let tableConfig = {
