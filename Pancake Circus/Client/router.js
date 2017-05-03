@@ -28,7 +28,10 @@ export default new VueRouter({
         { path: 'orders', component: load('Orders') },
         { path: 'vendors', component: load('Vendors') },
         { path: 'manage', component: load('Manage') },
-        { path: 'inventory', component: load('Inventory') }
+        { path: 'inventory', component: load('Inventory') },
+        { path: 'vendorimport', component: load('VendorImport') },
+        { path: 'login', component: load('Login') },
+        { path: 'newstock', component: load('NewStock') }
       ]
     }, // Default
     { path: '*', component: load('Error404') } // Not found

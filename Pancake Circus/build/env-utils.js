@@ -8,6 +8,6 @@ module.exports = {
 
   platform: {
     theme: theme,
-    cordovaAssets: './cordova/platforms/' + (theme === 'mat' ? 'android' : 'ios') + '/platform_www'
+    cordovaAssets: `./cordova/platforms/${theme === 'mat' ? 'android' : 'ios'}/platform_www`
   }
 }

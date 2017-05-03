@@ -12,26 +12,24 @@ module.exports.styleLoaders = function (options) {
       loaders.splice(1, 0, 'postcss')
     }
 
-    var sourceLoader = loaders.map(function (loader) {
+    const sourceLoader = loaders.map(function (loader) {
       var extraParamChar
       if (/\?/.test(loader)) {
         loader = loader.replace(/\?/, '-loader?')
         extraParamChar = '&'
-      }
-      else {
+      } else {
         loader = loader + '-loader'
         extraParamChar = '?'
       }
       return loader + (options.sourceMap ? extraParamChar + 'sourceMap' : '')
-    }).join('!')
+    }).join('!');
 
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: sourceLoader,
         fallback: 'vue-style-loader'
       })
-    }
-    else {
+    } else {
       return ['vue-style-loader', sourceLoader].join('!')
     }
   }
@@ -47,12 +45,12 @@ module.exports.styleLoaders = function (options) {
 }
 
 module.exports.styleRules = function (options) {
-  var output = []
-  var loaders = exports.styleLoaders(options)
-  for (var extension in loaders) {
-    var loader = loaders[extension]
+  const output = [];
+  const loaders = exports.styleLoaders(options);
+  for (let extension in loaders) {
+    const loader = loaders[extension];
     output.push({
-      test: new RegExp('\\.' + extension + '$'),
+      test: new RegExp(`\\.${extension}$`),
       loader: loader
     })
   }

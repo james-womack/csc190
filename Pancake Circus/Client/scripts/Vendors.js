@@ -1,11 +1,10 @@
-﻿import { Platform, Utils, Toast, Dialog } from 'quasar'
+﻿import { Platform, Utils, Toast, Dialog, ActionSheet } from 'quasar'
 import { Clone, ResolveRoute, GlobalBus } from '../scripts/Utility'
-import { createVendor, createItem } from '../scripts/Dialogs'
 
-// Configuration of table its self
+
 let tableConfig = {
   rowHeight: '50px',
-  title: 'Inventory',
+  title: 'Vendors',
   refresh: true,
   columnPicker: true,
   leftStickyColumns: 1,
@@ -22,34 +21,25 @@ let tableConfig = {
   }
 };
 
-// Configuration of table columns
 let tableColumns = [
   {
     label: 'Name',
     field: 'name',
+    width: '80px',
+    filter: true,
+    sort: 'string'
+  },
+  {
+    label: 'Phone Number ',
+    field: 'phoneNumber',
     width: '100px',
     filter: true,
     sort: 'string'
   },
   {
-    label: 'Location',
-    field: 'location',
-    width: '80px',
-    filter: true,
-    sort: 'string'
-  },
-  {
-    label: 'Amount Left',
-    field: 'amount',
-    width: '80px',
-    filter: true,
-    sort: 'number'
-
-  },
-  {
-    label: 'Vendor',
-    field: 'vendor',
-    width: '150px',
+    label: 'Address',
+    field: 'address',
+    width: '200px',
     filter: true,
     sort: 'string'
   }
@@ -58,7 +48,6 @@ let tableColumns = [
 export default {
   data() {
     return {
-      // Table data its self
       table: [],
       config: tableConfig,
       columns: tableColumns,
@@ -70,43 +59,41 @@ export default {
   },
   methods: {
     commitEdits() {
-      // Adds any pending changes to the database
       let deleteOp = Promise.resolve();
       let editOp = Promise.resolve();
 
       // Resolve all of the requests to the server
       if (this.edits.delete.length !== 0) {
-        deleteOp = this.$http.delete(ResolveRoute('stock'), { body: this.edits.delete })
+        deleteOp = this.$http.delete(ResolveRoute('vendor'), { body: this.edits.delete })
       }
       if (this.edits.change.length !== 0) {
-        editOp = this.$http.patch(ResolveRoute('stock'), this.edits.change)
+        editOp = this.$http.patch(ResolveRoute('vendor'), this.edits.change)
       }
 
       // Show toast for success/failure
       const finish = Promise.all([deleteOp, editOp]);
       finish.then(resp => {
-          Toast.create('Changes Saved!')
-          this.edits.change = []
-          this.edits.delete = []
-        },
+        Toast.create('Changes Saved!')
+        this.edits.change = []
+        this.edits.delete = []
+      },
         e => {
           Toast.create('Failed to save changes...')
           console.log(e)
         })
     },
+    addVendor() {
+      GlobalBus.$emit('newVendor')
+    },
     discardEdits() {
-      // Just discards any pending edits
       this.edits.change = []
       this.edits.delete = []
-      this.refresh(() => {})
+      this.refresh(() => { })
     },
     deleteRows(props) {
-      // Deletes all rows selected from the table and puts
-      // The rows in pending edits
       let str = '';
       const propsToDelete = [];
       const _this = this;
-
       props.rows.forEach(row => {
         str += `${row.data.name}, `
         propsToDelete.push({
@@ -114,10 +101,9 @@ export default {
           vendorId: row.data.vendorId
         })
       })
-
       Dialog.create({
         title: 'Confirm Deletion',
-        message: `This will delete these items from stock: [${str.substr(0, str.length - 2)}]`,
+        message: `This will delete the following vendor: [${str.substr(0, str.length - 2)}]`,
         icon: 'warning',
         buttons: [
           {
@@ -160,31 +146,6 @@ export default {
       })
 
     },
-    addVendor() {
-      createVendor().then(value => {
-        return this.$http.put(ResolveRoute('vendors'), value)
-      }, error => {
-        Toast.create('Cancelled')
-      }).then(value => {
-        Toast.create('Added vendor')
-      }, error => {
-        Toast.create('Error: Failed to add new vendor')
-      })
-    },
-    addItem() {
-      createItem().then(value => {
-        return this.$http.put(ResolveRoute('items'), value)
-      }, error => {
-        Toast.create('Cancelled')
-      }).then(value => {
-        Toast.create('Added item') 
-      }, error => {
-        Toast.create('Error: Failed to add new item')
-      })
-    },
-    addStock() {
-      console.log("Add stock")
-    },
     refresh(done) {
       // See if there are any pending changes
       if (this.edits.change.length === 0 && this.edits.delete.length === 0) {
@@ -199,7 +160,7 @@ export default {
         Dialog.create({
           title: 'Warning',
           message:
-            "This will discard any edits you've made, are you sure?\nYou can save them using the save button in the lower right",
+          "This will discard any edits you've made, are you sure?\nYou can save them using the save button in the lower right",
           buttons: [
             'Cancel',
             {
@@ -219,96 +180,67 @@ export default {
       }
     },
     getNewData() {
-      // Gets new stock info from the server
-      return this.$http.get(ResolveRoute('stock')).then(response => {
-          const resp = response.json()
-          console.log(response.status)
-          return resp
-        },
-        err => {
-          log(err)
+      return this.$http.get(ResolveRoute('vendor')).then(response => {
+        const resp = response.json();
+        console.log(response.status);
+        return resp;
+      }, err => {
+          log(err);
         });
     },
     toTableFormat(obj) {
-      // Converts data from server into table friendly format
-      const newData = []
+      const newData = [];
       for (let val of obj) {
         newData.push({
-          name: val.item.name,
-          amount: val.amount,
-          location: val.location,
-          minAmount: val.item.minimumAmount,
-          vendor: val.vendor.name,
-          vendorId: val.vendor.id,
-          itemId: val.item.id
+          address: `${val.streetAddress}, ${val.city} ${val.state}, ${val.zipCode}`,
+          phoneNumber: {
+            number: val.phone,
+            numberLink: `tel:+${val.phone.replace(/-|\s/g, "")}`
+          },
+          name: val.name,
+          id: val.id,
+          streetAddress: val.streetAddress,
+          city: val.city,
+          state: val.state,
+          zipCode: val.zipCode
         });
       }
-      return newData
+      return newData;
     },
-    editAmount(row) {
-      // Edits the amount left for a certain row
-      const _this = this
-      Dialog.create({
-        title: 'Enter Amount',
-        form: {
-          amt: {
-            type: 'numeric',
-            label: 'New Amount',
-            model: `${row.amount}`
-          }
-        },
-        buttons: [
-          'Cancel',
+    editAddress(row) {
+      console.log(`${row.address}`)
+    },
+    editNumber(row) {
+      ActionSheet.create({
+        title: "Actions", 
+        //Gallery mode
+        gallery: true, 
+
+        // what you want to do
+        actions: [
           {
-            label: 'Ok',
-            handler(data) {
-              _this.addChange({
-                name: row.name,
-                amount: data.amt,
-                location: row.location,
-                minAmount: row.minAmount,
-                vendor: row.vendor,
-                vendorId: row.vendorId,
-                itemId: row.itemId
-              })
+            label: 'Delete',
+            icon: 'delete',
+
+            handler: function () {
+              console.log('Deleted Article')
             }
+          },
+          {
+            label: 'Call',
+            icon: 'call',
+            handler: this.handleCall
+          },
+          {
+            label: 'Edit Number',
+            icon: 'mode_edit',
+            handler: this.handleEdit
           }
         ]
       })
-    },
-    editLocation(row) {
-      // Edits the location of the stock in inventory
-      const _this = this
-      Dialog.create({
-        title: 'Enter Location',
-        form: {
-          loc: {
-            type: 'textbox',
-            label: 'New Location',
-            model: `${row.location}`
-          }
-        },
-        buttons: [
-          'Cancel',
-          {
-            label: 'Ok',
-            handler(data) {
-              _this.addChange({
-                name: row.name,
-                amount: row.amount,
-                location: data.loc,
-                minAmount: row.minAmount,
-                vendor: row.vendor,
-                vendorId: row.vendorId,
-                itemId: row.itemId
-              })
-            }
-          }
-        ]
-      })
+      console.log(row)
     },
     addChange(data) {
-      // Adds a change to the table
       let existingEdit = -1
       let tableIndex = null
 
@@ -331,9 +263,7 @@ export default {
 
       this.edits.change.push({
         name: data.name,
-        amount: data.amount,
-        location: data.location,
-        minAmount: data.minAmount,
+        cost: data.cost,
         vendor: data.vendor,
         vendorId: data.vendorId,
         itemId: data.itemId
@@ -343,14 +273,13 @@ export default {
       console.log(this.table[tableIndex])
 
       this.table[tableIndex].amount = data.amount
-      this.table[tableIndex].location = data.location
       console.log(this.edits)
     }
   },
   mounted() {
     const resp = this.getNewData();
     resp.then(obj => {
-      this.table = this.toTableFormat(obj)
+      this.table = this.toTableFormat(obj);
     });
   }
 }
