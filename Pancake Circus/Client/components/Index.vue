@@ -21,6 +21,8 @@
         <q-drawer-link icon="assignment" to="orders">Orders</q-drawer-link>
         <q-drawer-link icon="face" to="vendors">Vendors</q-drawer-link>
         <q-drawer-link icon="supervisor_account" to="manage">Manage</q-drawer-link>
+        <q-drawer-link icon="import_export" to="vendorimport">Import Product</q-drawer-link>
+        <q-drawer-link icon="account_circle" to="login">Login</q-drawer-link>"
       </div>
     </q-drawer>
 

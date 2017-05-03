@@ -1,6 +1,8 @@
 ﻿import { Platform, Utils, Toast, Dialog } from 'quasar'
 import { Clone, ResolveRoute, GlobalBus } from '../scripts/Utility'
+import { createVendor, createItem } from '../scripts/Dialogs'
 
+// Configuration of table its self
 let tableConfig = {
   rowHeight: '50px',
   title: 'Inventory',
@@ -19,6 +21,8 @@ let tableConfig = {
     noDataAfterFiltering: '<i>warning</i> Results are no, search terms redefine you must.'
   }
 };
+
+// Configuration of table columns
 let tableColumns = [
   {
     label: 'Name',
@@ -50,9 +54,11 @@ let tableColumns = [
     sort: 'string'
   }
 ];
+
 export default {
   data() {
     return {
+      // Table data its self
       table: [],
       config: tableConfig,
       columns: tableColumns,
@@ -64,6 +70,7 @@ export default {
   },
   methods: {
     commitEdits() {
+      // Adds any pending changes to the database
       let deleteOp = Promise.resolve();
       let editOp = Promise.resolve();
 
@@ -87,18 +94,19 @@ export default {
           console.log(e)
         })
     },
-    addItem() {
-      GlobalBus.$emit('newStock')
-    },
     discardEdits() {
+      // Just discards any pending edits
       this.edits.change = []
       this.edits.delete = []
       this.refresh(() => {})
     },
     deleteRows(props) {
+      // Deletes all rows selected from the table and puts
+      // The rows in pending edits
       let str = '';
       const propsToDelete = [];
       const _this = this;
+
       props.rows.forEach(row => {
         str += `${row.data.name}, `
         propsToDelete.push({
@@ -106,6 +114,7 @@ export default {
           vendorId: row.data.vendorId
         })
       })
+
       Dialog.create({
         title: 'Confirm Deletion',
         message: `This will delete these items from stock: [${str.substr(0, str.length - 2)}]`,
@@ -150,6 +159,31 @@ export default {
         ]
       })
 
+    },
+    addVendor() {
+      createVendor().then(value => {
+        return this.$http.put(ResolveRoute('vendors'), value)
+      }, error => {
+        Toast.create('Cancelled')
+      }).then(value => {
+        Toast.create('Added vendor')
+      }, error => {
+        Toast.create('Error: Failed to add new vendor')
+      })
+    },
+    addItem() {
+      createItem().then(value => {
+        return this.$http.put(ResolveRoute('items'), value)
+      }, error => {
+        Toast.create('Cancelled')
+      }).then(value => {
+        Toast.create('Added item') 
+      }, error => {
+        Toast.create('Error: Failed to add new item')
+      })
+    },
+    addStock() {
+      console.log("Add stock")
     },
     refresh(done) {
       // See if there are any pending changes
@@ -196,6 +230,7 @@ export default {
         });
     },
     toTableFormat(obj) {
+      // Converts data from server into table friendly format
       const newData = []
       for (let val of obj) {
         newData.push({
@@ -211,6 +246,7 @@ export default {
       return newData
     },
     editAmount(row) {
+      // Edits the amount left for a certain row
       const _this = this
       Dialog.create({
         title: 'Enter Amount',
@@ -241,9 +277,38 @@ export default {
       })
     },
     editLocation(row) {
-      console.log(`${row.location}`)
+      // Edits the location of the stock in inventory
+      const _this = this
+      Dialog.create({
+        title: 'Enter Location',
+        form: {
+          loc: {
+            type: 'textbox',
+            label: 'New Location',
+            model: `${row.location}`
+          }
+        },
+        buttons: [
+          'Cancel',
+          {
+            label: 'Ok',
+            handler(data) {
+              _this.addChange({
+                name: row.name,
+                amount: row.amount,
+                location: data.loc,
+                minAmount: row.minAmount,
+                vendor: row.vendor,
+                vendorId: row.vendorId,
+                itemId: row.itemId
+              })
+            }
+          }
+        ]
+      })
     },
     addChange(data) {
+      // Adds a change to the table
       let existingEdit = -1
       let tableIndex = null
 
@@ -278,6 +343,7 @@ export default {
       console.log(this.table[tableIndex])
 
       this.table[tableIndex].amount = data.amount
+      this.table[tableIndex].location = data.location
       console.log(this.edits)
     }
   },
@@ -288,4 +354,3 @@ export default {
     });
   }
 }
-

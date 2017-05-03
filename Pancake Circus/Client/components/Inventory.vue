@@ -1,20 +1,26 @@
 ﻿<template>
   <div>
-    <q-fab class="absolute-bottom-right"
+    <q-fab v-if="edits.change.length !== 0 || edits.delete.length !== 0"
+           class="absolute-bottom-right"
            @click="commitEdits()"
            classNames="primary"
            active-icon="save"
+           icon="keyboard_arrow_up"
            direction="up"
-           v-show="edits.change.length !== 0 || edits.delete.length !== 0"
-           style="right: 14px; bottom: 14px;">
+           style="right: 14px; bottom: 14px; z-index: 99;">
       <q-small-fab class="red" @click.native="discardEdits()" icon="delete_forever"></q-small-fab>
     </q-fab>
-    <button class="green circular absolute-bottom-right"
-           @click="addItem()"
-           v-show="edits.change.length === 0 && edits.delete.length === 0"
-           id="addButton">
-           <i>add</i>
-    </button>
+    <q-fab v-else 
+           class="absolute-bottom-right"
+           @click="addStock()"
+           classNames="green"
+           active-icon="add"
+           icon="keyboard_arrow_up"
+           direction="up"
+           style="right: 14px; bottom: 14px; z-index: 99">
+           <q-small-fab class="blue" @click.native="addVendor()" icon="person_add"></q-small-fab>
+           <q-small-fab class="blue" @click.native="addItem()" icon="create"></q-small-fab>
+    </q-fab>
     <div class="layout-padding">
       <q-data-table :data="table" :config="config" :columns="columns" @refresh="refresh">
         <template slot="col-location" scope="cell">

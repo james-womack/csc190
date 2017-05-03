@@ -184,8 +184,7 @@ export default {
         const resp = response.json();
         console.log(response.status);
         return resp;
-      },
-        err => {
+      }, err => {
           log(err);
         });
     },
