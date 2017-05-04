@@ -19,7 +19,7 @@ function clone (obj) {
   if (obj instanceof Array) {
     copy = []
     for (var i = 0, len = obj.length; i < len; i++) {
-      copy[i] = Clone(obj[i])
+      copy[i] = clone(obj[i])
     }
     return copy
   }
@@ -29,7 +29,7 @@ function clone (obj) {
     copy = {}
     for (let attr in obj) {
       if (obj.hasOwnProperty(attr)) {
-        copy[attr] = Clone(obj[attr])
+        copy[attr] = clone(obj[attr])
       }
     }
     return copy

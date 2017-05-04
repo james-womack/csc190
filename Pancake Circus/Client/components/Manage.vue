@@ -13,26 +13,55 @@
     <div class="layout-padding">
       <div ref="itemsTab">
         <q-data-table
-          :data="itData"
-          :config="itConf"
-          :columns="itCols">
+          :data="itemsData"
+          :config="itemsConf"
+          :columns="itemsCols"
+          @refresh="refreshItems">
+          <template slot="col-name" scope="cell">
+            <button class="primary clear small" @click="editValue(editTypes.itemName, cell.row)">{{ cell.data }}</button>
+          </template>
 
+          <template slot="col-minimumAmount" scope="cell">
+            <button class="green clear small" @click="editValue(editTypes.minimumAmount, cell.row)">{{ cell.data }}</button>
+          </template>
+
+          <template slot="col-units" scope="cell">
+            <button class="primary clear small" @click="editValue(editTypes.units, cell.row)">{{ cell.data }}</button>
+          </template>
         </q-data-table>
       </div>
       <div ref="vendorsTab">
         <q-data-table
-          :data="vtData"
-          :config="vtConf"
-          :columns="vtCols">
+          :data="vendorsData"
+          :config="vendorsConf"
+          :columns="vendorsCols"
+          @refresh="refreshVendors">
+          <template slot="col-name" scope="cell">
+            <button class="primary clear small" @click="editValue(editTypes.vendorName, cell.row)">{{ cell.data }}</button>
+          </template>
 
+          <template slot="col-phone" scope="cell">
+            <button class="primary clear small" @click="editValue(editTypes.phone, cell.row)">{{ cell.data }}</button>
+          </template>
         </q-data-table>
       </div>
       <div ref="productsTab">
         <q-data-table
-          :data="ptData"
-          :config="ptConf"
-          :columns="ptCols">
+          :data="productsData"
+          :config="productsConf"
+          :columns="productsCols"
+          @refresh="refreshProducts">
+            <template slot="col-packageAmount" scope="cell">
+              <button class="green small clear" @click="editValue(editTypes.packageAmount, cell.row)">{{ cell.data }}</button>
+            </template>
 
+          <template slot="col-price" scope="cell">
+            <button class="green small clear" @click="editValue(editTypes.price, cell.row)">{{ '$' + (cell.data/100).toFixed(2) }}</button>
+          </template>
+
+          <template slot="col-sku" scope="cell">
+            <button class="primary clear small" @click="editValue(editTypes.sku, cell.row)">{{ cell.data }}</button>
+          </template>
         </q-data-table>
       </div>
     </div>
