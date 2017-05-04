@@ -119,7 +119,7 @@ namespace PancakeCircus.Data
         new Vendor
         {
           City = "Sacramento",
-          Name = "Cisco",
+          Name = "Costco",
           Country = "United States",
           Phone = "123-456-7890",
           State = "CA",

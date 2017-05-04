@@ -10,6 +10,7 @@
     public Item Item { get; set; }
 
     public int OrderAmount { get; set; }
+    public int TotalAmount { get; set; }
     public int PaidPrice { get; set; }
   }
 }
