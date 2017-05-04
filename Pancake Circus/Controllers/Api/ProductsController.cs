@@ -87,6 +87,13 @@ namespace PancakeCircus.Controllers.Api
       return Json(products);
     }
 
+    [HttpGet]
+    public IActionResult GetAllProducts()
+    {
+      var products = Context.Products.Include(p => p.Item).Include(p => p.Vendor).ToList().Select(p => new ClientProduct(p, p.Item, p.Vendor));
+      return Json(products);
+    }
+
     //Dont know if this is how you do the import part
     // Also I dont know how to input the cvs part into it. 
     [HttpPut("import")]

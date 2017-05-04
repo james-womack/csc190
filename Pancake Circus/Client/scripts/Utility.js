@@ -1,6 +1,6 @@
 ﻿import Vue from 'vue'
 
-function Clone (obj) {
+function clone (obj) {
   var copy
 
   // Handle the 3 simple types, and null or undefined
@@ -19,7 +19,7 @@ function Clone (obj) {
   if (obj instanceof Array) {
     copy = []
     for (var i = 0, len = obj.length; i < len; i++) {
-      copy[i] = Clone(obj[i])
+      copy[i] = clone(obj[i])
     }
     return copy
   }
@@ -29,7 +29,7 @@ function Clone (obj) {
     copy = {}
     for (let attr in obj) {
       if (obj.hasOwnProperty(attr)) {
-        copy[attr] = Clone(obj[attr])
+        copy[attr] = clone(obj[attr])
       }
     }
     return copy
@@ -44,4 +44,4 @@ function ResolveRoute (route) {
 
 var GlobalBus = new Vue()
 
-export { Clone, ResolveRoute, GlobalBus }
+export { clone, ResolveRoute, GlobalBus }

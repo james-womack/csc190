@@ -8,8 +8,8 @@ let tableConfig = {
   title: 'Inventory',
   refresh: true,
   columnPicker: true,
-  leftStickyColumns: 1,
-  rightStickyColumns: 2,
+  leftStickyColumns: 0,
+  rightStickyColumns: 0,
   responsive: true,
   pagination: {
     rowsPerPage: 15,
