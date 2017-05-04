@@ -1,5 +1,5 @@
 ﻿import { Platform, Utils, Toast, Dialog } from 'quasar'
-import { ResolveRoute } from '../scripts/Utility'
+import { ResolveRoute, GlobalBus } from '../scripts/Utility'
 
 let tableConfig = {
   rowHeight: '50px',
@@ -132,7 +132,11 @@ export default {
         });
       }
       return newData;
+    },
+    gotoGenerate() {
+      GlobalBus.$emit('generateOrders');
     }
+
   },
   mounted() {
     const resp = this.getNewData();
@@ -140,4 +144,5 @@ export default {
       this.table = this.toTableFormat(obj);
     });
   }
+
 }

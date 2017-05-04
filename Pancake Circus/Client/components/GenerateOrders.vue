@@ -6,6 +6,7 @@
           <span class="label">{{ cell.data }}</span>
         </template>
 
+        
         <template slot="selection" scope="props">
           <button class="primary clear" @click="deleteRows(props)">
             <i>delete</i>
@@ -15,13 +16,11 @@
                   style="margin: 0 15px 15px 0">
             <i>keyboard_arrow_up</i>
           </button>
-        </template>
+        </template> 
       </q-data-table>
-      <button class="primary" @click="gotoGenerate()">Generate Orders</button>
     </div>
   </div>
 </template>
 
-<script src="../scripts/Orders.js">
+<script src="../scripts/GenerateOrders.js">
 </script>
-
