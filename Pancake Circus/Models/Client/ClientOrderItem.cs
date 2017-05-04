@@ -15,6 +15,7 @@ namespace PancakeCircus.Models.Client
       Order = new ClientOrder(orderItem.Order, false);
       PaidPrice = orderItem.PaidPrice;
       OrderAmount = orderItem.OrderAmount;
+      TotalAmount = orderItem.TotalAmount;
       if (product != null){
         Product = new ClientProduct(product, orderItem.Item, orderItem.Vendor);
       }
@@ -25,6 +26,7 @@ namespace PancakeCircus.Models.Client
     public ClientOrder Order { get; set; } 
     public ClientProduct Product { get; set; }
     public int PaidPrice { get; set; }
+    public int TotalAmount { get; set; }
     public int OrderAmount { get; set; }
     
   }
