@@ -186,6 +186,7 @@ namespace PancakeCircus.Data
           into randProd
           let orderAmt = Random.Next(1, 4)
           let paid = orderAmt * randProd.Price * randProd.PackageAmount
+          let totalAmt = orderAmt * randProd.PackageAmount
           select new OrderItem
           {
             Item = randProd.Item,
@@ -195,7 +196,8 @@ namespace PancakeCircus.Data
             Order = t,
             OrderId = t.OrderId,
             OrderAmount = orderAmt,
-            PaidPrice = (int) Math.Ceiling(paid)
+            PaidPrice = (int) Math.Ceiling(paid),
+            TotalAmount = (int) Math.Ceiling(totalAmt)
           });
 
       var q =

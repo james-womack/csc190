@@ -85,6 +85,11 @@ let OrderTableColumns = [
       return row.contents
     },
     width: '30px'
+  },
+  {
+    label: 'Edit',
+    field: 'editStatus',
+    width: '30px'
   }
 ]
 
@@ -184,18 +189,8 @@ export default {
         return Error(type)
       })
     },
-    refreshItems(done) {
-      this.refreshTable(this.types.items).then(v => {
-        done()
-      })
-    },
-    refreshVendors(done) {
-      this.refreshTable(this.types.vendors).then(v => {
-        done()
-      })
-    },
-    refreshProducts(done) {
-      this.refreshTable(this.types.products).then(v => {
+    refreshOrders(done) {
+      this.refreshTable(this.types.orders).then(v => {
         done()
       })
     },
