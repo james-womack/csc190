@@ -44,6 +44,11 @@ let itemsTableColumns = [
     label: 'Units',
     field: 'units',
     width: '50px'
+  },
+  {
+    label: 'Edit',
+    field: 'editStatus',
+    width: '30px'
   }
 ]
 let vendorsTableColumns = [
@@ -63,6 +68,11 @@ let vendorsTableColumns = [
     label: 'Address',
     field: 'address',
     width: '150px'
+  },
+  {
+    label: 'Edit',
+    field: 'editStatus',
+    width: '30px'
   }
 ]
 let productsTableColumns = [
@@ -112,6 +122,11 @@ let productsTableColumns = [
     label: 'SKU',
     field: 'sku',
     width: '100px'
+  },
+  {
+    label: 'Edit',
+    field: 'editStatus',
+    width: '30px'
   }
 ]
 
@@ -131,6 +146,19 @@ export default {
       itemsEdits: [],
       vendorsEdits: [],
       productsEdits: [],
+      // Arrays to store new objects to add
+      itemsNew: [],
+      vendorsNew: [],
+      productsNew: [],
+      // Arrays to store objects to be deleted
+      itemsDelete: [],
+      vendorsDelete: [],
+      productsDelete: [],
+      statusTypes: {
+        none: 'none',
+        edit: 'edit',
+        new: 'new'
+      },
       types: {
         items: 'items',
         vendors: 'vendors',
@@ -357,6 +385,7 @@ export default {
 
         // Update values
         tableEntry[editType.field] = formData.val
+        tableEntry.editStatus = this.statusTypes.edit
         edits.push(clone(tableEntry))
       }, err => {
         console.log(err)
@@ -368,6 +397,11 @@ export default {
       return this.getData (type).then(d => {
         return this.toTableFormat (d, type)
       }).then(tableData => {
+        // Add editStatus to each variable
+        tableData.forEach(row => {
+          row.editStatus = this.statusTypes.none
+        })
+
         let table = type + 'Data'
         console.log(`Storing ${table}`)
         this[table] = tableData

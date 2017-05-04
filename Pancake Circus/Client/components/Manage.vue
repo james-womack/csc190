@@ -10,6 +10,7 @@
         <q-tab name="productsTab" icon="local_shipping">Products</q-tab>
     </q-tabs>
 
+    <!-- Tabs for items -->
     <div class="layout-padding">
       <div ref="itemsTab">
         <q-data-table
@@ -17,6 +18,21 @@
           :config="itemsConf"
           :columns="itemsCols"
           @refresh="refreshItems">
+          <template slot="col-editStatus" scope="cell">
+            <div v-if="cell.data == statusTypes.edit">
+              <i>edit</i>
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                Edited Item
+              </q-tooltip>
+            </div>
+            <div v-else-if="cell.data == statusTypes.new">
+              <i>new_releases</i>
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                New Item
+              </q-tooltip>
+            </div>
+            <div v-else></div>
+          </template>
           <template slot="col-name" scope="cell">
             <button class="primary clear small" @click="editValue(editTypes.itemName, cell.row)">{{ cell.data }}</button>
           </template>
@@ -36,6 +52,21 @@
           :config="vendorsConf"
           :columns="vendorsCols"
           @refresh="refreshVendors">
+          <template slot="col-editStatus" scope="cell">
+            <div v-if="cell.data == statusTypes.edit">
+              <i>edit</i>
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                Edited Item
+              </q-tooltip>
+            </div>
+            <div v-else-if="cell.data == statusTypes.new">
+              <i>new_releases</i>
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                New Item
+              </q-tooltip>
+            </div>
+            <div v-else></div>
+          </template>
           <template slot="col-name" scope="cell">
             <button class="primary clear small" @click="editValue(editTypes.vendorName, cell.row)">{{ cell.data }}</button>
           </template>
@@ -51,6 +82,21 @@
           :config="productsConf"
           :columns="productsCols"
           @refresh="refreshProducts">
+            <template slot="col-editStatus" scope="cell">
+              <div v-if="cell.data == statusTypes.edit">
+                <i>edit</i>
+                <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                  Edited Item
+                </q-tooltip>
+              </div>
+              <div v-else-if="cell.data == statusTypes.new">
+                <i>new_releases</i>
+                <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                  New Item
+                </q-tooltip>
+              </div>
+              <div v-else></div>
+            </template>
             <template slot="col-packageAmount" scope="cell">
               <button class="green small clear" @click="editValue(editTypes.packageAmount, cell.row)">{{ cell.data }}</button>
             </template>
