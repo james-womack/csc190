@@ -19,7 +19,7 @@
       <div class="list platform-delimiter">
         <q-drawer-link icon="assessment" to="inventory">Inventory</q-drawer-link>
         <q-drawer-link icon="assignment" to="orders">Orders</q-drawer-link>
-        <q-drawer-link icon="assignment" to="generateorders">Generate Orders</q-drawer-link>
+        <q-drawer-link icon="assignment" to="orders">Generate Orders</q-drawer-link>
         <q-drawer-link icon="face" to="vendors">Vendors</q-drawer-link>
         <q-drawer-link icon="supervisor_account" to="manage">Manage</q-drawer-link>
         <q-drawer-link icon="import_export" to="vendorimport">Import Product</q-drawer-link>
@@ -27,7 +27,25 @@
       </div>
     </q-drawer>
 
+    <!--
+      Replace following "div" with
+      "<router-view class="layout-view">" component
+      if using subRoutes
+    -->
     <router-view class="layout-view"></router-view>
+    <!--
+    <div class="layout-view">
+      <div class="logo-container non-selectable no-pointer-events">
+        <div class="logo" :style="position">
+          <img src="~assets/quasar-logo.png">
+          <p class="caption text-center">
+            <span class="desktop-only">Your a ass</span>
+            <span class="touch-only">Touch screen and move.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    -->
   </q-layout>
 </template>
 
@@ -49,10 +67,10 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.$router.replace('inventory')
-      GlobalBus.$off('generateOrders')
+      GlobalBus.$off('newStock')
       let _this = this
-      GlobalBus.$on('generateOrders', function () {
-        _this.$router.push('generateorders')
+      GlobalBus.$on('newStock', function () {
+        _this.$router.push('newstock')
       })
     })
   },

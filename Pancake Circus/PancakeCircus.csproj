@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Files not to show in IDE -->
+    <None Remove="Client\components\Index - Copy.vue" />
     <None Remove="yarn.lock" />
   </ItemGroup>
   <ItemGroup>
