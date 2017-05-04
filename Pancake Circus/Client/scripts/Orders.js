@@ -6,8 +6,8 @@ let tableConfig = {
   title: 'Orders',
   refresh: true,
   columnPicker: true,
-  leftStickyColumns: 1,
-  rightStickyColumns: 2,
+  leftStickyColumns: 0,
+  rightStickyColumns: 0,
   responsive: true,
   pagination: {
     rowsPerPage: 15,
@@ -23,7 +23,7 @@ let tableColumns = [
   {
     label: 'Order Id',
     field: 'id',
-    width: '80px',
+    width: '150px',
     filter: true,
     sort: 'number'
 

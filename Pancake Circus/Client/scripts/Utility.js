@@ -1,6 +1,6 @@
 ﻿import Vue from 'vue'
 
-function Clone (obj) {
+function clone (obj) {
   var copy
 
   // Handle the 3 simple types, and null or undefined
@@ -44,4 +44,4 @@ function ResolveRoute (route) {
 
 var GlobalBus = new Vue()
 
-export { Clone, ResolveRoute, GlobalBus }
+export { clone, ResolveRoute, GlobalBus }
