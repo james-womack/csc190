@@ -13,6 +13,32 @@
     <!-- Tabs for items -->
     <div class="layout-padding">
       <div ref="itemsTab">
+        <div class="list">
+          <q-collapsible icon="add" label="Add Item">
+            <div style="padding: 8px">
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newItemName" type="text"/>
+                <label>Name</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.number="newItemMinAmount" type="number"/>
+                <label>Minimum Amount</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newItemUnits" type="text"/>
+                <label>Units</label>
+              </div>
+              <br/>
+              <button v-if="newItemName.length > 0 && newItemUnits.length > 0 && newItemMinAmount > 0" class="primary" style="margin-top: 8px">
+                Add Item
+              </button>
+              <button v-else class="primary disabled" style="margin-top: 8px">
+                Add Item
+              </button>
+            </div>
+          </q-collapsible>
+        </div>
+        <br />
         <q-data-table
           :data="itemsData"
           :config="itemsConf"

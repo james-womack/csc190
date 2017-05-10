@@ -293,7 +293,11 @@ export default {
         products (a, b) {
           return a.itemId === b.itemId && a.vendorId === b.vendorId
         }
-      }
+      },
+      // Stuff for adding new items
+      newItemName: '',
+      newItemMinAmount: '',
+      newItemUnits: ''
     }
   },
   methods: {
