@@ -3,7 +3,7 @@
     <q-tabs
       :refs="$refs"
       default-tab="itemsTab"
-      class="warning shadow-1 justified"
+      class="secondary shadow-1 justified"
       style="padding-top: 5px">
         <q-tab name="itemsTab" icon="restaurant_menu">Items</q-tab>
         <q-tab name="vendorsTab" icon="store">Vendor</q-tab>
@@ -13,6 +13,7 @@
     <!-- Tabs for items -->
     <div class="layout-padding">
       <div ref="itemsTab">
+        <!-- Add item accordian -->
         <div class="list">
           <q-collapsible icon="add" label="Add Item">
             <div style="padding: 8px">
@@ -29,7 +30,10 @@
                 <label>Units</label>
               </div>
               <br/>
-              <button v-if="newItemName.length > 0 && newItemUnits.length > 0 && newItemMinAmount > 0" class="primary" style="margin-top: 8px">
+              <button v-if="newItemName.length > 0 && newItemUnits.length > 0 && newItemMinAmount > 0" 
+                      class="primary" 
+                      style="margin-top: 8px"
+                      @click="addNewItem()">
                 Add Item
               </button>
               <button v-else class="primary disabled" style="margin-top: 8px">
@@ -39,6 +43,7 @@
           </q-collapsible>
         </div>
         <br />
+        <!-- Data table for items -->
         <q-data-table
           :data="itemsData"
           :config="itemsConf"
@@ -72,7 +77,53 @@
           </template>
         </q-data-table>
       </div>
+      <!-- Vendors tab -->
       <div ref="vendorsTab">
+        <div class="list">
+          <q-collapsible icon="add" label="Add Vendor">
+            <div style="padding: 8px">
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newVendorName" type="text" />
+                <label>Name</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newVendorPhoneNumber" type="text" />
+                <label>Phone Number</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newVendorStreetAddress" type="text" />
+                <label>Street Address</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newVendorCity" type="text" />
+                <label>City</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newVendorZipCode" type="text" />
+                <label>Zip Code</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newVendorState" type="text" />
+                <label>State</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newVendorCountry" type="text" />
+                <label>Country</label>
+              </div>
+              <br />
+              <button v-if="newVendorName.length > 0 && newVendorPhoneNumber.length > 0 && newVendorCity.length > 0 && newVendorZipCode.length > 0 && newVendorState.length > 0 && newVendorCountry.length > 0"
+                      class="primary"
+                      style="margin-top: 8px"
+                      @click="addNewVendor()">
+                Add Vendor
+              </button>
+              <button v-else class="primary disabled" style="margin-top: 8px">
+                Add Vendor
+              </button>
+            </div>
+          </q-collapsible>
+        </div>
+        <br />
         <q-data-table
           :data="vendorsData"
           :config="vendorsConf"
@@ -102,7 +153,51 @@
           </template>
         </q-data-table>
       </div>
+      <!-- Products Tab -->
       <div ref="productsTab">
+        <!-- Add product accordian -->
+        <div class="list">
+          <q-collapsible icon="add" label="Add Product">
+            <div style="padding: 8px">
+              <q-select
+                style="margin-right: 8px"
+                type="list"
+                @input="newProductItemSelected"
+                v-model="newProductItem"
+                :options="itemsOptions"
+                label="Item"></q-select>
+              <q-select
+                type="list"
+                @input="newProductVendorSelected"
+                v-model="newProductVendor"
+                :options="vendorsOptions"
+                label="From Vendor"></q-select>
+              <br/>
+              <div class="floating-label">
+                <input required class="full-width" v-model.trim="newProductSku" type="text" />
+                <label>SKU</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.number="newProductPrice" type="number" />
+                <label>Price</label>
+              </div>
+              <div class="floating-label">
+                <input required class="full-width" v-model.number="newProductPackageAmount" type="number" />
+                <label>Package Amount</label>
+              </div>
+              <button v-if="newProductSelectionValid && newProductSku.length > 0 && newProductPrice > 0 && newProductPackageAmount > 0" 
+                      class="primary" 
+                      style="margin-top: 8px" 
+                      @click="addNewProduct()">
+                Add Product
+              </button>
+              <button v-else class="primary disabled" style="margin-top: 8px">
+                Add Product
+              </button>
+            </div>
+          </q-collapsible>
+        </div>
+        <br/>
         <q-data-table
           :data="productsData"
           :config="productsConf"

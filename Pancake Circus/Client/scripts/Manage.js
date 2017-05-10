@@ -5,7 +5,7 @@ import { ResolveRoute, clone } from '../scripts/Utility'
 // Configs for all three tables
 let itemsTableConfig = {
   rowHeight: '50px',
-  title: 'Possible Items',
+  title: 'All Items',
   refresh: true,
   columnPicker: false,
   selection: 'none'
@@ -19,7 +19,7 @@ let vendorsTableConfig = {
 }
 let productsTableConfig = {
   rowHeight: '50px',
-  title: 'Products from All Vendors',
+  title: 'All Products',
   refresh: true,
   columnPicker: true,
   selection: 'none'
@@ -154,6 +154,14 @@ export default {
       itemsDelete: [],
       vendorsDelete: [],
       productsDelete: [],
+      // Arrays with the raw data from the server
+      itemsActual: [],
+      vendorsActual: [],
+      productsActual: [],
+      // Options for any select UI elements
+      itemsOptions: [],
+      vendorsOptions: [],
+      productsOptions: [],
       statusTypes: {
         none: 'none',
         edit: 'edit',
@@ -252,6 +260,27 @@ export default {
           }
         }
       },
+      // Converters for various UI elements in the manage page
+      uiConverters: {
+        items (item) {
+          return {
+            label: item.name,
+            value: item
+          }
+        },
+        vendors (vendor) {
+          return {
+            label: vendor.name,
+            value: vendor
+          }
+        },
+        products (product) {
+          return {
+            label: `${product.item.name} (${product.vendor.name})`,
+            value: product
+          }
+        }
+      },
       // Converters for each type downloaded from the server
       // So the tables have it in the correct format
       converters: {
@@ -297,12 +326,27 @@ export default {
       // Stuff for adding new items
       newItemName: '',
       newItemMinAmount: '',
-      newItemUnits: ''
+      newItemUnits: '',
+      // Stuff for adding new vendors
+      newVendorName: '',
+      newVendorPhoneNumber: '',
+      newVendorStreetAddress: '',
+      newVendorCity: '',
+      newVendorZipCode: '',
+      newVendorState: '',
+      newVendorCountry: '',
+      // Stuff for adding new products
+      newProductItem: null,
+      newProductVendor: null,
+      newProductSku: '',
+      newProductPrice: '',
+      newProductPackageAmount: '',
+      newProductSelectionValid: false
     }
   },
   methods: {
     // Translates rawData into type for the table
-    toTableFormat (rawData, type) {
+    toTableFormat(rawData, type) {
       return this.converters[type](rawData)
     },
     // Gets the data for the type from the server
@@ -317,17 +361,17 @@ export default {
       })
     },
     refreshItems (done) {
-      this.refreshTable(this.types.items).then(v => {
+      this.refreshData(this.types.items).then(v => {
         done()
       })
     },
     refreshVendors (done) {
-      this.refreshTable(this.types.vendors).then(v => {
+      this.refreshData(this.types.vendors).then(v => {
         done()
       })
     },
     refreshProducts (done) {
-      this.refreshTable(this.types.products).then(v => {
+      this.refreshData(this.types.products).then(v => {
         done()
       })
     },
@@ -360,6 +404,7 @@ export default {
           ]
         })
       })
+
       prom.then(formData => {
         // Get which edit array to check, and converter
         let edits = this[editType.for + 'Edits']
@@ -396,9 +441,22 @@ export default {
         Toast.create('User Cancelled')
       })
     },
-    // Refreshes the table of type specified
-    refreshTable (type) {
-      return this.getData (type).then(d => {
+    // Refreshes the data of type specified
+    refreshData (type) {
+      return this.getData(type).then(d => {
+        this[type + 'Actual'] = d
+
+        // Convert data into ui options
+        let newOptions = []
+        d.forEach(v => {
+          let converter = this.uiConverters[type]
+          newOptions.push(converter(v))
+        })
+
+        // Store new options
+        this[type + 'Options'] = newOptions
+        console.log(newOptions)
+
         return this.toTableFormat (d, type)
       }).then(tableData => {
         // Add editStatus to each variable
@@ -414,10 +472,66 @@ export default {
     // Refreshes all of the tables
     refreshAll () {
       return Promise.all([
-        this.refreshTable(this.types.items),
-        this.refreshTable(this.types.vendors),
-        this.refreshTable(this.types.products)
+        this.refreshData(this.types.items),
+        this.refreshData(this.types.vendors),
+        this.refreshData(this.types.products)
       ])
+    },
+    // Adds a new item to the table
+    addNewItem () {
+      
+    },
+    addNewVendor () {
+      
+    },
+    addNewProduct () {
+      
+    },
+    // Method to see if newProduct dialogs item and vendors are selected
+    productIsVendorSelected () {
+      let selected = this.newProductVendor !== undefined && this.newProductVendor !== null && this.newProductVendor.id !== undefined && this.newProductVendor.id !== ''
+      console.log(selected)
+      return selected
+    },
+    productIsItemSelected() {
+      let selected = this.newProductItem !== undefined && this.newProductItem !== null && this.newProductItem.id !== undefined && this.newProductItem.id !== ''
+      console.log(selected)
+      return selected
+    },
+    newProductVendorSelected (val) {
+      // Update if item doesnt exist
+      this.newProductEnsureSelection()
+    },
+    newProductItemSelected (val) {
+      this.newProductItemSelected = val !== undefined && val !== null
+
+      // Update if product doesnt exist
+      this.newProductEnsureSelection()
+    },
+    // Makes sure that the product doesn't exist already
+    newProductEnsureSelection () {
+      if (!this.productIsItemSelected() || !this.productIsVendorSelected()) {
+        this.newProductSelectionValid = false
+        return
+      }
+
+      // Now see if this combo exists
+      let itemId = this.newProductItem.id
+      let vendorId = this.newProductVendor.id
+      let unique = true
+
+      // See's if the product already exists
+      this.productsActual.forEach(p => {
+        if (itemId === p.item.id && vendorId === p.vendor.id) {
+          unique = false
+        }
+      })
+
+      this.newProductSelectionValid = unique
+    },
+    newProductReady() {
+      let fieldsFilled = this.newProductPackageAmount > 0 && this.newProductPrice > 0 && this.newProductSku.length > 0
+      return !this.newProductDoesntExist() && fieldsFilled
     }
   },
   mounted () {
