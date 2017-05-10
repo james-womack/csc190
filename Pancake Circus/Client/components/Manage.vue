@@ -162,16 +162,19 @@
               <q-select
                 style="margin-right: 8px"
                 type="list"
-                @input="newProductItemSelected"
                 v-model="newProductItem"
                 :options="itemsOptions"
                 label="Item"></q-select>
               <q-select
                 type="list"
-                @input="newProductVendorSelected"
                 v-model="newProductVendor"
                 :options="vendorsOptions"
                 label="From Vendor"></q-select>
+              <span class="label bg-red text-white" 
+                    v-if="!newProductSelectionValid && newProductSelectionReady"
+                    style="margin-top: 5px; margin-left: 8px">
+                Product already exists!
+              </span>
               <br/>
               <div class="floating-label">
                 <input required class="full-width" v-model.trim="newProductSku" type="text" />
@@ -185,7 +188,7 @@
                 <input required class="full-width" v-model.number="newProductPackageAmount" type="number" />
                 <label>Package Amount</label>
               </div>
-              <button v-if="newProductSelectionValid && newProductSku.length > 0 && newProductPrice > 0 && newProductPackageAmount > 0" 
+              <button v-if="newProductSelectionReady && newProductSelectionValid && newProductSku.length > 0 && newProductPrice > 0 && newProductPackageAmount > 0" 
                       class="primary" 
                       style="margin-top: 8px" 
                       @click="addNewProduct()">

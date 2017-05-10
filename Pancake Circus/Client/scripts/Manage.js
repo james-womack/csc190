@@ -341,6 +341,7 @@ export default {
       newProductSku: '',
       newProductPrice: '',
       newProductPackageAmount: '',
+      newProductSelectionReady: false,
       newProductSelectionValid: false
     }
   },
@@ -455,7 +456,6 @@ export default {
 
         // Store new options
         this[type + 'Options'] = newOptions
-        console.log(newOptions)
 
         return this.toTableFormat (d, type)
       }).then(tableData => {
@@ -465,7 +465,6 @@ export default {
         })
 
         let table = type + 'Data'
-        console.log(`Storing ${table}`)
         this[table] = tableData
       })
     },
@@ -490,31 +489,14 @@ export default {
     // Method to see if newProduct dialogs item and vendors are selected
     productIsVendorSelected () {
       let selected = this.newProductVendor !== undefined && this.newProductVendor !== null && this.newProductVendor.id !== undefined && this.newProductVendor.id !== ''
-      console.log(selected)
       return selected
     },
     productIsItemSelected() {
       let selected = this.newProductItem !== undefined && this.newProductItem !== null && this.newProductItem.id !== undefined && this.newProductItem.id !== ''
-      console.log(selected)
       return selected
-    },
-    newProductVendorSelected (val) {
-      // Update if item doesnt exist
-      this.newProductEnsureSelection()
-    },
-    newProductItemSelected (val) {
-      this.newProductItemSelected = val !== undefined && val !== null
-
-      // Update if product doesnt exist
-      this.newProductEnsureSelection()
     },
     // Makes sure that the product doesn't exist already
     newProductEnsureSelection () {
-      if (!this.productIsItemSelected() || !this.productIsVendorSelected()) {
-        this.newProductSelectionValid = false
-        return
-      }
-
       // Now see if this combo exists
       let itemId = this.newProductItem.id
       let vendorId = this.newProductVendor.id
@@ -528,10 +510,16 @@ export default {
       })
 
       this.newProductSelectionValid = unique
-    },
-    newProductReady() {
-      let fieldsFilled = this.newProductPackageAmount > 0 && this.newProductPrice > 0 && this.newProductSku.length > 0
-      return !this.newProductDoesntExist() && fieldsFilled
+    }
+  },
+  watch: {
+    newProductItem (newItem) {
+      this.newProductSelectionReady = this.productIsVendorSelected() && this.productIsItemSelected()
+
+      // If there is a selection, ensure its a unique selection
+      if (this.newProductSelectionReady) {
+        this.newProductEnsureSelection ()
+      }
     }
   },
   mounted () {
