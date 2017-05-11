@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,22 +29,61 @@ namespace PancakeCircus.Controllers.Api
       return Json(Context.Vendors.ToList().Select(x => new ClientVendor(x)));
     }
 
-    [HttpPut]
-    public IActionResult AddVendor([FromBody] ClientVendor newVendor)
+    [HttpPatch]
+    public IActionResult PatchVendors([FromBody] List<ClientVendor> vendors)
     {
-      var vendor = new Vendor
+      var ids = vendors.Select(x => x.Id).ToList();
+      var dbVendors = Context.Vendors.Where(x => ids.Contains(x.VendorId)).ToDictionary(x => x.VendorId, x => x);
+
+      foreach (var vendor in vendors)
       {
-        City = newVendor.City,
-        Country = newVendor.Country,
-        Name = newVendor.Name,
-        Phone = newVendor.Phone,
-        State = newVendor.State,
-        StreetAddress = newVendor.StreetAddress,
-        ZipCode = newVendor.ZipCode
-      };
+        if (vendor == null || !dbVendors.ContainsKey(vendor.Id))
+          return BadRequest($"No vendor found {vendor?.Id}");
+        dbVendors[vendor.Id].City = vendor.City;
+        dbVendors[vendor.Id].Country = vendor.Country;
+        dbVendors[vendor.Id].Name = vendor.Name;
+        dbVendors[vendor.Id].Phone = vendor.Phone;
+        dbVendors[vendor.Id].State = vendor.State;
+        dbVendors[vendor.Id].StreetAddress = vendor.StreetAddress;
+        dbVendors[vendor.Id].ZipCode = vendor.ZipCode;
+        Context.Vendors.Update(dbVendors[vendor.Id]);
+      }
+      Context.SaveChanges();
+
+      return Ok();
+    }
+
+    [HttpDelete]
+    public IActionResult DeleteVendors([FromBody] List<string> vendors)
+    {
+      var dbVendors = Context.Vendors.Where(x => vendors.Contains(x.VendorId)).ToList();
+      if (vendors.Count != dbVendors.Count)
+        return NotFound("Some vendors");
+      
+      Context.Vendors.RemoveRange(dbVendors);
+      Context.SaveChanges();
+
+      return Ok();
+    }
+    [HttpPut]
+    public IActionResult AddVendor([FromBody] List<ClientVendor> newVendors)
+    {
+      foreach (var newVendor in newVendors)
+      {
+        var vendor = new Vendor
+        {
+          City = newVendor.City,
+          Country = newVendor.Country,
+          Name = newVendor.Name,
+          Phone = newVendor.Phone,
+          State = newVendor.State,
+          StreetAddress = newVendor.StreetAddress,
+          ZipCode = newVendor.ZipCode
+        };
+        Context.Vendors.Add(vendor);
+      }
       try
       {
-        Context.Vendors.Add(vendor);
         Context.SaveChanges();
       }
       catch (DbUpdateException ex)

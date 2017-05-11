@@ -166,28 +166,6 @@ export default {
       })
 
     },
-    addVendor() {
-      createVendor().then(value => {
-        return this.$http.put(ResolveRoute('vendors'), value)
-      }, error => {
-        Toast.create('Cancelled')
-      }).then(value => {
-        Toast.create('Added vendor')
-      }, error => {
-        Toast.create('Error: Failed to add new vendor')
-      })
-    },
-    addItem() {
-      createItem().then(value => {
-        return this.$http.put(ResolveRoute('items'), value)
-      }, error => {
-        Toast.create('Cancelled')
-      }).then(value => {
-        Toast.create('Added item') 
-      }, error => {
-        Toast.create('Error: Failed to add new item')
-      })
-    },
     addStock() {
       console.log("Add stock")
     },

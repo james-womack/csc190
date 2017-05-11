@@ -628,6 +628,12 @@ export default {
       console.log(this.productsDelete)
       */
 
+      // Convert product edits into server type
+      let productEdits = []
+      this.productsEdits.forEach(p => {
+        productEdits.push(this.serverConverters.products(p))
+      })
+
       // Make requests pertainning to items now
       this.saving = true
 
@@ -689,8 +695,8 @@ export default {
       let productsNew = Promise.resolve()
       let productsDelete = Promise.resolve()
 
-      if (this.productsEdits.length > 0) {
-        productsSave = this.$http.patch(ResolveRoute('products'), this.productsEdits).then(resp => {
+      if (productEdits.length > 0) {
+        productsSave = this.$http.patch(ResolveRoute('products'), productEdits).then(resp => {
           console.log('products saved')
         }, err => {
           console.log(err)
