@@ -55,7 +55,15 @@ export default {
     return {
       table: [],
       config: tableConfig,
-      columns: tableColumns
+      columns: tableColumns,
+      vendorOptions: [
+        {
+          label: 'None',
+          value: ''
+        }
+      ],
+      perferredVendor: '',
+      safetyFactor: 2.0
     };
   },
   methods: {
@@ -117,8 +125,34 @@ export default {
           return resp;
         },
         err => {
-          log(err);
+          console.log(err);
         });
+    },
+    updateVenderOptions() {
+      return this.$http.get(ResolveRoute('vendors')).then(resp => {
+        return resp.json()
+      },
+      err => {
+        console.log(err)
+      }).then(json => {
+        let newOpts = [
+          {
+            label: 'None',
+            value: ''
+          }
+        ]
+
+        // Create new options
+        json.forEach(v => {
+          newOpts.push({
+            label: v.name,
+            value: v.id
+          })
+        })
+
+        // Update vendor options
+        this.vendorOptions = newOpts
+      })
     },
     toTableFormat(obj) {
       const newData = [];
@@ -143,6 +177,12 @@ export default {
     resp.then(obj => {
       this.table = this.toTableFormat(obj);
     });
+
+    // Get vendor options now too
+    this.updateVenderOptions().then(v => {
+      console.log('Updated vendor options')
+      console.log(this.vendorOptions)
+    })
   }
 
 }

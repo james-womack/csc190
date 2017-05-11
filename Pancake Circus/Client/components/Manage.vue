@@ -14,7 +14,7 @@
     <div class="layout-padding">
       <div ref="itemsTab">
         <!-- Add item accordian -->
-        <div class="list">
+        <div class="list" v-if="!addRemovedProduct">
           <q-collapsible icon="add" label="Add Item">
             <div style="padding: 8px">
               <div class="floating-label">
@@ -41,6 +41,13 @@
               </button>
             </div>
           </q-collapsible>
+        </div>
+        <div v-else class="card bg-red text-white">
+          <div class="card-content">
+            Please save your changes before modifying vendors.
+            When you edit this, you directly affect products, so save those first.
+            Use the save button in the lower right.
+          </div>
         </div>
         <br />
         <!-- Data table for items -->
@@ -79,7 +86,7 @@
       </div>
       <!-- Vendors tab -->
       <div ref="vendorsTab">
-        <div class="list">
+        <div class="list" v-if="!addRemovedProduct">
           <q-collapsible icon="add" label="Add Vendor">
             <div style="padding: 8px">
               <div class="floating-label">
@@ -123,6 +130,13 @@
             </div>
           </q-collapsible>
         </div>
+        <div v-else class="card bg-red text-white">
+          <div class="card-content">
+            Please save your changes before modifying vendors.
+            When you edit this, you directly affect products, so save those first.
+            Use the save button in the lower right.
+          </div>
+        </div>
         <br />
         <q-data-table
           :data="vendorsData"
@@ -156,7 +170,7 @@
       <!-- Products Tab -->
       <div ref="productsTab">
         <!-- Add product accordian -->
-        <div class="list">
+        <div class="list" v-if="!criticalActionDone">
           <q-collapsible icon="add" label="Add Product">
             <div style="padding: 8px">
               <q-select
@@ -182,7 +196,7 @@
               </div>
               <div class="floating-label">
                 <input required class="full-width" v-model.number="newProductPrice" type="number" />
-                <label>Price</label>
+                <label>Price (In cents)</label>
               </div>
               <div class="floating-label">
                 <input required class="full-width" v-model.number="newProductPackageAmount" type="number" />
@@ -199,6 +213,13 @@
               </button>
             </div>
           </q-collapsible>
+        </div>
+        <div v-else class="card bg-red text-white">
+          <div class="card-content">
+            Please save your changes before modifying products. 
+            It is dependent on the changes in Items and Vendors. 
+            Use the save button in the lower right.
+          </div>
         </div>
         <br/>
         <q-data-table

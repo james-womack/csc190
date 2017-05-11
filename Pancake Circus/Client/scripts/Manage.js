@@ -342,7 +342,10 @@ export default {
       newProductPrice: '',
       newProductPackageAmount: '',
       newProductSelectionReady: false,
-      newProductSelectionValid: false
+      newProductSelectionValid: false,
+      // Stuff for actually adding/deleting/editing items
+      criticalActionDone: false, // AKA added/deleted item or vendor
+      addRemovedProduct: false
     }
   },
   methods: {
@@ -477,14 +480,71 @@ export default {
       ])
     },
     // Adds a new item to the table
-    addNewItem () {
-      
+    addNewItem() {
+      // disallow if we added/removed product
+      if (this.addRemovedProduct) {
+        return
+      }
+
+      // Set critical flag to true
+      this.criticalActionDone = true
+
+      // Now add the item and clear out the field
+      itemsNew.push({
+        name: this.newItemName,
+        minimumAmount: this.newItemMinAmount,
+        units: this.newItemUnits
+      })
+
+      this.newItemName = ''
+      this.newItemMinAmount = ''
+      this.newItemUnits = ''
     },
     addNewVendor () {
-      
+      // Disallow if we added/removed product
+      if (this.addRemovedProduct) {
+        return
+      }
+
+      // Set critical flag to true
+      this.criticalActionDone = true
+
+      // Now add the vendor and clear out the fields
+      vendorsNew.push({
+        name: this.newVendorName,
+        phone: this.newVendorPhoneNumber,
+        streetAddress: this.newVendorStreetAddress,
+        city: this.newVendorCity,
+        zipCode: this.newVendorZipCode,
+        state: this.newVendorState,
+        country: this.newVendorCountry
+      })
+
+      this.newVendorName = ''
+      this.newVendorPhoneNumber = ''
+      this.newVendorStreetAddress = ''
+      this.newVendorCity = ''
+      this.newVendorZipCode = ''
+      this.newVendorState = ''
+      this.newVendorCountry = ''
     },
     addNewProduct () {
-      
+      // Disallow if we added/removed item/vendor
+      if (this.criticalActionDone) {
+        return
+      }
+
+      // Set the added/removed flag
+      this.addRemovedProduct = true
+
+      // Now add the product and clear out the fields
+      this.productsNew.push({
+        itemId: this.newProductItem.id,
+        vendorId: this.newProductVendor.id,
+        sku: this.newProductSku,
+        price: this.newProductPrice,
+        packageAmount: this.newProductPackageAmount
+      })
     },
     // Method to see if newProduct dialogs item and vendors are selected
     productIsVendorSelected () {
