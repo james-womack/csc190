@@ -167,10 +167,12 @@ export default {
       }
       return newData;
     },
-    gotoGenerate() {
-      GlobalBus.$emit('generateOrders');
+    generateOrder() {
+      
+    },
+    showOrder(orderId) {
+      GlobalBus.$emit('showOrder', orderId)
     }
-
   },
   mounted() {
     const resp = this.getNewData();

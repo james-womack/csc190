@@ -48,15 +48,18 @@ export default {
 
       // Event for going to generate orders
       let _this = this
-      GlobalBus.$off('generateOrders')
-      GlobalBus.$on('generateOrders', function () {
-        _this.$router.push('generateorders')
-      })
 
       // Event for going to import product page
       GlobalBus.$off('importProduct')
       GlobalBus.$on('importProduct', function () {
         _this.$router.push('importProduct')
+      })
+
+      // Event for going to view order page
+      GlobalBus.$off('showOrder')
+      GlobalBus.$on('showOrder', function (val) {
+        GlobalBus.showOrder = val
+        _this.$router.push('vieworder')
       })
     })
   },
