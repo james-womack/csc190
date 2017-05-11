@@ -31,9 +31,9 @@ let tableColumns = [
   {
     label: 'Price Paid',
     field: 'pricePaid',
-    width: '150px',
+    width: '100px',
     filter: true,
-    sort: 'string'
+    sort: 'number'
   },
   {
     label: 'Order Date',

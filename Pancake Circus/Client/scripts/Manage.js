@@ -494,11 +494,17 @@ export default {
       this.productsConf.selection = 'none'
 
       // Now add the item and clear out the field
-      this.itemsNew.push({
+      let item = {
         name: this.newItemName,
         minimumAmount: this.newItemMinAmount,
         units: this.newItemUnits
-      })
+      }
+      this.itemsNew.push(item)
+      let convItem = this.converters.items([item])
+      convItem[0].editStatus = this.statusTypes.new
+
+      // Add item to the table
+      this.itemsData.push(convItem[0])
 
       this.newItemName = ''
       this.newItemMinAmount = ''
@@ -773,65 +779,53 @@ export default {
     },
     deleteRows(type, rows) {
       this[type + 'DeleteRows'](rows)
+
+      let tableData = this[type + 'Data']
+      let deletes = this[type + 'Delete']
+
+      // Mark items as deleted
+      rows.rows.forEach(r => {
+        // Make sure that it isnt already deleted
+        if (type !== this.types.products) {
+          if (deletes.indexOf(r.data.id) !== -1) {
+            console.log(`Already deleting ${r.data.id}`)
+            return
+          }
+        } else {
+          if (deletes.indexOf({ itemId: r.data.item.id, vendorId: r.data.vendor.id }) !== -1) {
+            console.log(`Already deleting ${r.data.item.id}, ${r.data.vendor.id}`)
+            return
+          }
+        }
+
+        // Delete the item
+        deletes.push(r.data.id)
+        let te = r.data
+
+        // Update edit status
+        te.editStatus = this.statusTypes.delete
+        te.name = r.data.name
+
+        tableData.splice(r.index, 1)
+        tableData.push(te)
+      })
     },
     // Methods for handling delete
     itemsDeleteRows(rows) {
       // Set correct state
       this.criticalActionDone = true
       this.productsConf.selection = 'none'
-
-      // Mark items as deleted
-      rows.rows.forEach(r => {
-        this.itemsDelete.push(r.data.id)
-        let te = null
-        this.itemsData.forEach(i => {
-          if (i.id === r.data.id) {
-            te = i
-          }
-        })
-        te.editStatus = this.statusTypes.delete
-        te.name = r.data.name
-        console.log(te)
-      })
     },
     vendorsDeleteRows(rows) {
       // set correct state
       this.criticalActionDone = true
       this.productsConf.selection = 'none'
-
-      // Mark items as deleted
-      rows.rows.forEach(r => {
-        this.vendorsDelete.push(r.data.id)
-
-        let te = null
-        this.vendorsData.forEach(i => {
-          if (i.id === r.data.id) {
-            te = i
-          }
-        })
-        te.editStatus = this.statusTypes.delete
-        te.name = r.data.name
-      })
     },
     productsDeleteRows(rows) {
       // Set correct state
       this.addRemovedProduct = true
       this.itemsConf.selection = 'none'
       this.vendorsConf.selection = 'none'
-
-      // Mark items as deleted
-      rows.rows.forEach(r => {
-        this.productsDelete.push({ itemId: r.data.item.id, vendorId: r.data.vendor.id })
-
-        let te = null
-        this.productsData.find(i => {
-          if (i.item.id === r.data.item.id && i.vendor.id === r.data.vendor.id) {
-            te = i
-          }
-        })
-        te.editStatus = this.statusTypes.delete
-        te.price = r.data.price
-      })
     }
   },
   computed: {

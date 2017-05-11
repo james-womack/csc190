@@ -101,9 +101,14 @@
             </template>
 
             <template slot="selection" scope="props">
-              <button class="red clear" @click="deleteRows(types.items, props)">
-                <i>delete</i>
-              </button>
+              <div>
+                <button v-if="!addRemovedProduct" class="red clear" @click="deleteRows(types.items, props)">
+                  <i>delete</i>
+                </button>
+                <button v-else class="red clear disabled">
+                  <i>delete</i>
+                </button>
+              </div>
             </template>
           </q-data-table>
         </div>
@@ -178,7 +183,7 @@
                   New Item
                 </q-tooltip>
               </div>
-              <div v-else-if="cell.data == statusTypes.delete" style="background-color: red">
+              <div v-else-if="cell.data == statusTypes.delete">
                 <i>delete_forever</i>
                 <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
                   Delete Vendor
@@ -195,9 +200,14 @@
             </template>
 
             <template slot="selection" scope="props">
-              <button class="red clear" @click="deleteRows(types.vendors, props)">
-                <i>delete</i>
-              </button>
+              <div>
+                <button v-if="!addRemovedProduct" class="red clear" @click="deleteRows(types.vendors, props)">
+                  <i>delete</i>
+                </button>
+                <button v-else class="red clear disabled">
+                  <i>delete</i>
+                </button>
+              </div>
             </template>
           </q-data-table>
         </div>
@@ -271,7 +281,7 @@
                   New Item
                 </q-tooltip>
               </div>
-              <div v-else-if="cell.data == statusTypes.delete" style="background-color: red">
+              <div v-else-if="cell.data == statusTypes.delete">
                 <i>delete</i>
                 <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
                   Delete Product
@@ -292,7 +302,10 @@
             </template>
 
             <template slot="selection" scope="props">
-              <button class="red clear" @click="deleteRows(types.products, props)">
+              <button v-if="!criticalActionDone" class="red clear" @click="deleteRows(types.products, props)">
+                <i>delete</i>
+              </button>
+              <button v-else class="red clear disabled">
                 <i>delete</i>
               </button>
             </template>
