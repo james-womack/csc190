@@ -8,21 +8,21 @@ let itemsTableConfig = {
   title: 'All Items',
   refresh: true,
   columnPicker: false,
-  selection: 'none'
+  selection: 'multiple'
 }
 let vendorsTableConfig = {
   rowHeight: '50px',
   title: 'All Vendors',
   refresh: true,
   columnPicker: false,
-  selection: 'none'
+  selection: 'multiple'
 }
 let productsTableConfig = {
   rowHeight: '50px',
   title: 'All Products',
   refresh: true,
   columnPicker: true,
-  selection: 'none'
+  selection: 'multiple'
 }
 
 // Columns for all three tables
@@ -165,6 +165,7 @@ export default {
       statusTypes: {
         none: 'none',
         edit: 'edit',
+        delete: 'delete',
         new: 'new'
       },
       types: {
@@ -490,6 +491,7 @@ export default {
 
       // Set critical flag to true
       this.criticalActionDone = true
+      this.productsConf.selection = 'none'
 
       // Now add the item and clear out the field
       this.itemsNew.push({
@@ -510,6 +512,7 @@ export default {
 
       // Set critical flag to true
       this.criticalActionDone = true
+      this.productsConf.selection = 'none'
 
       // Now add the vendor
       this.vendorsNew.push({
@@ -554,6 +557,8 @@ export default {
 
       // Set the added/removed flag
       this.addRemovedProduct = true
+      this.itemsConf.selection = 'none'
+      this.vendorsConf.selection = 'none'
 
       // Now add the product
       this.productsNew.push({
@@ -728,12 +733,26 @@ export default {
       }).then(v => {
         Toast.create('Saved Changes')
         this.saving = false
+        this.reset()
+      }, err => {
+        console.log(err)
+        this.saving = false
+        this.reset()
+      })
+    },
+    discardChanges() {
+      this.reset()
+
+      // Refresh table
+      this.saving = true
+      this.refreshAll().then(v => {
+        this.saving = false
       }, err => {
         console.log(err)
         this.saving = false
       })
     },
-    discardChanges() {
+    reset() {
       // Discard changes
       this.itemsEdits = []
       this.itemsNew = []
@@ -748,14 +767,70 @@ export default {
       // Restore state
       this.criticalActionDone = false
       this.addRemovedProduct = false
+      this.itemsConf.selection = 'multiple'
+      this.vendorsConf.selection = 'multiple'
+      this.productsConf.selection = 'multiple'
+    },
+    deleteRows(type, rows) {
+      this[type + 'DeleteRows'](rows)
+    },
+    // Methods for handling delete
+    itemsDeleteRows(rows) {
+      // Set correct state
+      this.criticalActionDone = true
+      this.productsConf.selection = 'none'
 
-      // Refresh table
-      this.saving = true
-      this.refreshAll().then(v => {
-        this.saving = true
-      }, err => {
-        console.log(err)
-        this.saving = true
+      // Mark items as deleted
+      rows.rows.forEach(r => {
+        this.itemsDelete.push(r.data.id)
+        let te = null
+        this.itemsData.forEach(i => {
+          if (i.id === r.data.id) {
+            te = i
+          }
+        })
+        te.editStatus = this.statusTypes.delete
+        te.name = r.data.name
+        console.log(te)
+      })
+    },
+    vendorsDeleteRows(rows) {
+      // set correct state
+      this.criticalActionDone = true
+      this.productsConf.selection = 'none'
+
+      // Mark items as deleted
+      rows.rows.forEach(r => {
+        this.vendorsDelete.push(r.data.id)
+
+        let te = null
+        this.vendorsData.forEach(i => {
+          if (i.id === r.data.id) {
+            te = i
+          }
+        })
+        te.editStatus = this.statusTypes.delete
+        te.name = r.data.name
+      })
+    },
+    productsDeleteRows(rows) {
+      // Set correct state
+      this.addRemovedProduct = true
+      this.itemsConf.selection = 'none'
+      this.vendorsConf.selection = 'none'
+
+      // Mark items as deleted
+      rows.rows.forEach(r => {
+        this.productsDelete.push({ itemId: r.data.item.id, vendorId: r.data.vendor.id })
+
+        let te = null
+        this.productsData.find(i => {
+          if (i.item.id === r.data.item.id && i.vendor.id === r.data.vendor.id) {
+            te = i
+          }
+        })
+        te.editStatus = this.statusTypes.delete
+        te.price = r.data.price
       })
     }
   },

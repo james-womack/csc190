@@ -80,6 +80,12 @@
                   New Item
                 </q-tooltip>
               </div>
+              <div v-else-if="cell.data == statusTypes.delete">
+                <i>delete_forever</i>
+                <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                  Delete Item
+                </q-tooltip>
+              </div>
               <div v-else></div>
             </template>
             <template slot="col-name" scope="cell">
@@ -92,6 +98,12 @@
 
             <template slot="col-units" scope="cell">
               <button class="primary clear small" @click="editValue(editTypes.units, cell.row)">{{ cell.data }}</button>
+            </template>
+
+            <template slot="selection" scope="props">
+              <button class="red clear" @click="deleteRows(types.items, props)">
+                <i>delete</i>
+              </button>
             </template>
           </q-data-table>
         </div>
@@ -166,6 +178,12 @@
                   New Item
                 </q-tooltip>
               </div>
+              <div v-else-if="cell.data == statusTypes.delete" style="background-color: red">
+                <i>delete_forever</i>
+                <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                  Delete Vendor
+                </q-tooltip>
+              </div>
               <div v-else></div>
             </template>
             <template slot="col-name" scope="cell">
@@ -174,6 +192,12 @@
 
             <template slot="col-phone" scope="cell">
               <button class="primary clear small" @click="editValue(editTypes.phone, cell.row)">{{ cell.data }}</button>
+            </template>
+
+            <template slot="selection" scope="props">
+              <button class="red clear" @click="deleteRows(types.vendors, props)">
+                <i>delete</i>
+              </button>
             </template>
           </q-data-table>
         </div>
@@ -247,6 +271,12 @@
                   New Item
                 </q-tooltip>
               </div>
+              <div v-else-if="cell.data == statusTypes.delete" style="background-color: red">
+                <i>delete</i>
+                <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+                  Delete Product
+                </q-tooltip>
+              </div>
               <div v-else></div>
             </template>
             <template slot="col-packageAmount" scope="cell">
@@ -259,6 +289,12 @@
 
             <template slot="col-sku" scope="cell">
               <button class="primary clear small" @click="editValue(editTypes.sku, cell.row)">{{ cell.data }}</button>
+            </template>
+
+            <template slot="selection" scope="props">
+              <button class="red clear" @click="deleteRows(types.products, props)">
+                <i>delete</i>
+              </button>
             </template>
           </q-data-table>
         </div>
