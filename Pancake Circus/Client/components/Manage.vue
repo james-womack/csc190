@@ -255,6 +255,41 @@
                 </button>
               </div>
             </q-collapsible>
+            <q-collapsible label="Import Products" icon="import_export">
+              <div style="padding: 8px">
+                <span class="label">Vendor</span>
+                <q-select type="radio"
+                          v-model="vendorSelect"
+                          :options="vendorsOptions"></q-select>
+                <p class="caption">Column In Excel:</p>
+                <div style="padding: 5px">
+                  <span class="label">Name</span>
+                  <input v-model="nameOptions" placeholder="A">
+                  <span class="label">SKU</span>
+                  <input v-model="skuOptions" placeholder="B">
+                  <span class="label">Price</span>
+                  <input v-model="priceOptions" placeholder="C">
+                  <span class="label">Amount</span>
+                  <input v-model="amtOptions" placeholder="D">
+                </div>
+                <div style="padding: 5px">
+                  <span class="label">Row Start</span>
+                  <input v-model="rowStart" placeholder="0">
+                  <span class="label">Row End</span>
+                  <input v-model="rowEnd">
+                </div>
+                <div style="padding: 5px">
+                  <span class="label">CSV File Upload:</span>
+                  <input v-model="csvFile">
+                  <button class="light">
+                    Browse Files
+                  </button>
+                </div>
+                <button class="primary" @click="importProductSheet()">
+                  Import
+                </button>
+              </div>
+            </q-collapsible>
           </div>
           <div v-else class="card bg-red text-white">
             <div class="card-content">

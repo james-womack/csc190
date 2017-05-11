@@ -30,7 +30,7 @@ export default new VueRouter({
         { path: 'inventory', component: load('Inventory') },
         { path: 'vendorimport', component: load('VendorImport') },
         { path: 'login', component: load('Login') },
-        { path: 'vieworder', component: load('ViewOrder')}
+        { path: 'vieworder', component: load('ViewOrder') }
       ]
     }, // Default
     { path: '*', component: load('Error404') } // Not found

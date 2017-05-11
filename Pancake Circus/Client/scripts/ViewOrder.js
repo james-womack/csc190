@@ -117,6 +117,7 @@ export default {
     },
     // Loads the data from the server
     loadData() {
+      console.log(this.order)
       return this.$http.get(ResolveRoute(`orders/${this.order}`)).then(resp => {
         return resp.json()
       }, err => {

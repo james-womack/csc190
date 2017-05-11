@@ -348,7 +348,16 @@ export default {
       criticalActionDone: false, // AKA added/deleted item or vendor
       addRemovedProduct: false,
       // this is true when we are saving
-      saving: false
+      saving: false,
+      // Import vendors option
+      vendorSelect: '',
+      nameOptions: '',
+      skuOptions: '',
+      priceOptions: '',
+      amtOptions: '',
+      rowStart: '',
+      rowEnd: '',
+      csvFile: ''
     }
   },
   methods: {
@@ -826,6 +835,9 @@ export default {
       this.addRemovedProduct = true
       this.itemsConf.selection = 'none'
       this.vendorsConf.selection = 'none'
+    },
+    importProductSheet() {
+      
     }
   },
   computed: {
