@@ -62,10 +62,16 @@ export default {
       table: [],
       config: tableConfig,
       columns: tableColumns,
+      itemOptions: [],
+      vendorOptions: [],
       edits: {
         delete: [],
         change: []
-      }
+      },
+      newStockItem: null,
+      newStockVendor: null,
+      newStockAmount: '',
+      newStockLocation: ''
     };
   },
   methods: {
@@ -245,6 +251,44 @@ export default {
       }
       return newData
     },
+    // Loads the options for the select controls
+    loadOptions () {
+      let vendorProm = this.$http.get(ResolveRoute('vendors')).then(resp => {
+        return resp.json()
+      }, err => {
+        console.log(err)
+      }).then(json => {
+        // Parse into select comp format
+        let newOpts = []
+        json.forEach(v => {
+          newOpts.push({
+            label: v.name,
+            value: v
+          })
+        })
+
+        this.vendorOptions = newOpts
+       })
+
+       let itemProm = this.$http.get(ResolveRoute('items')).then(resp => {
+         return resp.json()
+       }, err => {
+         console.log(err)
+       }).then(json => {
+         // Parse into select comp format
+         let newOpts = []
+         json.forEach(i => {
+           newOpts.push({
+             label: i.name,
+             value: i
+           })
+         })
+
+         this.itemOptions = newOpts
+       })
+
+       return Promise.all([vendorProm, itemProm])
+    },
     editAmount(row) {
       // Edits the amount left for a certain row
       const _this = this
@@ -352,5 +396,11 @@ export default {
     resp.then(obj => {
       this.table = this.toTableFormat(obj)
     });
+
+    this.loadOptions().then(v => {
+      console.log('loaded options')
+    }, err => {
+      console.log(err)
+    })
   }
 }

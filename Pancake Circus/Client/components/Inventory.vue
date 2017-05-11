@@ -10,18 +10,34 @@
            style="right: 14px; bottom: 14px; z-index: 99;">
       <q-small-fab class="red" @click.native="discardEdits()" icon="delete_forever"></q-small-fab>
     </q-fab>
-    <q-fab v-else 
-           class="absolute-bottom-right"
-           @click="addStock()"
-           classNames="green"
-           active-icon="add"
-           icon="keyboard_arrow_up"
-           direction="up"
-           style="right: 14px; bottom: 14px; z-index: 99">
-           <q-small-fab class="blue" @click.native="addVendor()" icon="person_add"></q-small-fab>
-           <q-small-fab class="blue" @click.native="addItem()" icon="create"></q-small-fab>
-    </q-fab>
     <div class="layout-padding">
+      <div class="list">
+        <q-collapsible icon="add" label="Add Stock">
+          <div style="padding: 8px">
+            <q-select style="margin-right: 8px"
+                      type="list"
+                      v-model="newStockItem"
+                      :options="itemOptions"
+                      label="Item"></q-select>
+            <q-select type="list"
+                      v-model="newStockVendor"
+                      :options="vendorOptions"
+                      label="From Vendor"></q-select>
+            <div class="floating-label">
+              <input required class="full-width" v-model.trim="newStockLocation" type="text" />
+              <label>Location</label>
+            </div>
+            <div class="floating-label">
+              <input required class="full-width" v-model.number="newStockAmount" type="number" />
+              <label>Amount</label>
+            </div>
+            <button class="primary" style="margin-top: 8px">
+              Add Stock
+            </button>
+          </div>
+        </q-collapsible>
+      </div>
+      <br />
       <q-data-table :data="table" :config="config" :columns="columns" @refresh="refresh">
         <template slot="col-location" scope="cell">
           <span class="label">{{ cell.data }}</span>
