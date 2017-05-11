@@ -28,6 +28,25 @@
           </button>
         </template>
 
+        <template slot="col-status" scope="cell">
+          <div>
+            <button v-if="cell.data === 0" class="primary round small" @click="approveDenyDialog(cell)">
+              Approve/Deny
+            </button>
+            <button v-else-if="cell.data === 1" class="grey small round disabled">Fulfilled</button>
+            <button v-else-if="cell.data === 2" class="red round small" @click="approveDenyDialog(cell)">
+              Denied
+            </button>
+            <button v-else class="green small round" @click="approveDenyDialog(cell)">
+              Approved
+            </button>
+          </div>
+        </template>
+
+        <template slot="col-ph" scope="cell">
+          <button class="secondary small clear" @click="copyOrder(cell)">Copy</button>
+        </template>
+
         <template slot="selection" scope="props">
           <button class="primary clear" @click="deleteRows(props)">
             <i>delete</i>

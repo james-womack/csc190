@@ -44,10 +44,15 @@ let tableColumns = [
   },
   {
     label: 'Status',
-    field: 'name',
-    width: '100px',
+    field: 'status',
+    width: '110px',
     filter: true,
     sort: 'string'
+  },
+  {
+    label: 'Copy',
+    field: 'ph',
+    width: '80px'
   }
 ];
 export default {
@@ -162,6 +167,7 @@ export default {
           status: val.status,
           pricePaid: val.pricePaid,
           itemCount: val.itemCount,
+          ph: 0,
           id: val.id
         });
       }
@@ -170,8 +176,44 @@ export default {
     generateOrder() {
       
     },
+    copyOrder() {
+      
+    },
     showOrder(orderId) {
       GlobalBus.$emit('showOrder', orderId)
+    },
+    approveDenyDialog(cell) {
+      Dialog.create({
+        title: 'Change order status',
+        message: 'What status would you like to set for this order?',
+        stackButtons: true,
+        buttons: [
+          {
+            label: 'Approved',
+            handler() {
+              console.log('Approved')
+            }
+          },
+          {
+            label: 'Denied',
+            handler() {
+              console.log('Denied')
+            }
+          },
+          {
+            label: 'Fullfilled',
+            handler() {
+              console.log('Fullfilled')
+            }
+          },
+          {
+            label: 'Cancel',
+            handler() {
+              console.log('Cancel')
+            }
+          }
+        ]
+      })
     }
   },
   mounted() {
