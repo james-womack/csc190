@@ -21,13 +21,13 @@
                 Order Amount
               </label>
             </div>
-            <span class="label bg-primary">
+            <span class="label bg-primary text-white">
               <span class="left-detail">Total Amount</span> {{ newTotal }}
             </span>
-            <span class="label bg-primary">
+            <span class="label bg-primary text-white">
               <span class="left-detail">Price</span> {{ (newPrice/100).toFixed(2) }}
             </span>
-            <button class="primary" @click="addOrderItem()" v-if="orderAmount > 0 && newSelectedProduct !== null && newSelectedProduct !== undefined">
+            <button class="primary" @click="addOrderItem()" v-if="newOrderAmount > 0 && newSelectedProduct !== null && newSelectedProduct !== undefined">
               Add Order Item
             </button>
             <button class="primary disabled" v-else>

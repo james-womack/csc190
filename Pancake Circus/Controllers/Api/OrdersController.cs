@@ -113,7 +113,7 @@ namespace PancakeCircus.Controllers.Api
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetOrder([FromQuery] string id)
+    public IActionResult GetOrder(string id)
     {
       var order = Context.Orders.FirstOrDefault(x => x.OrderId == id);
       if (order == null)

@@ -225,7 +225,6 @@ export default {
     // Get vendor options now too
     this.updateVenderOptions().then(v => {
       console.log('Updated vendor options')
-      console.log(this.vendorOptions)
     })
   }
 

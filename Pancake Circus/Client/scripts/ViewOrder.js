@@ -88,7 +88,7 @@ export default {
 
           // Add the product to the mapping
           this.itemProductMap[prod.item.id].push({
-            label: `${prod.vendor.name} [${prod.packageAmount} for $${(prod.price / 100).toFixed(2)} (${(prod.price / (100 * prod.packageAmount)).toFixed(2)} ea)]`,
+            label: `${prod.vendor.name} [${prod.packageAmount} for $${(prod.price / 100).toFixed(2)} ($${(prod.price / (100 * prod.packageAmount)).toFixed(2)} ea)]`,
             value: {
               itemId: prod.item.id,
               vendorId: prod.vendor.id,
@@ -101,9 +101,15 @@ export default {
           })
 
           // Add the items to the item options
-          if (this.itemOptions.find(x => {
-              return x.value.id === prod.item.id
-            }) === undefined) {
+          // find exist item
+          let itemExist = false
+          this.itemOptions.forEach(item => {
+            if (item.value.id === prod.item.id) {
+              itemExist = true
+            }
+          })
+
+          if (!itemExist) {
             this.itemOptions.push({
               label: prod.item.name,
               value: prod.item
@@ -163,6 +169,9 @@ export default {
     },
     discardChanges() {
       
+    },
+    addOrderItem() {
+      
     }
   },
   watch: {
@@ -209,6 +218,9 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.order = GlobalBus.showOrder
+      this.loadOptions().then(v => {
+        console.log('Loaded options')
+      })
     })
   }
 }
