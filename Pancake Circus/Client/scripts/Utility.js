@@ -42,6 +42,10 @@ function ResolveRoute (route) {
   return `http://localhost:5000/api${route.startsWith('/') ? '' : '/'}${route}`
 }
 
-var GlobalBus = new Vue()
+var GlobalBus = new Vue({
+  data: {
+    showOrder: null
+  }
+})
 
 export { clone, ResolveRoute, GlobalBus }

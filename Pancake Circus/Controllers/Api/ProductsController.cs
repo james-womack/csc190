@@ -25,14 +25,55 @@ namespace PancakeCircus.Controllers.Api
     public ILogger Logger { get; }
 
     [HttpPut]
-    public IActionResult AddProduct([FromBody] Product product)
+    public IActionResult AddProduct([FromBody] List<AddProductRequest> products)
     {
+      // Find Items and Vendors related to requests
+      var itemIds = products.Select(x => x.ItemId).ToList();
+      var vendorIds = products.Select(x => x.VendorId).ToList();
+      var dbItems = Context.Items.Where(x => itemIds.Contains(x.ItemId)).ToDictionary(x => x.ItemId, x => x);
+      var dbVendors = Context.Vendors.Where(x => vendorIds.Contains(x.VendorId)).ToDictionary(x => x.VendorId, x => x);
+
+      // Make sure they are of same length
+      if (dbItems.Count != itemIds.Count || dbVendors.Count != vendorIds.Count)
+      {
+        return BadRequest("Invalid Product Add Requests: No item/vendor found in list");
+      }
+
+      foreach (var prod in products)
+      {
+        Context.Products.Add(new Product()
+        {
+          Item = dbItems[prod.ItemId],
+          Vendor = dbVendors[prod.VendorId],
+          PackageAmount = prod.PackageAmount,
+          Price = prod.Price,
+          SKU = prod.SKU
+        });
+      }
+      Context.SaveChanges();
+
       return Ok();
     }
 
     [HttpPatch]
-    public IActionResult PatchProduct([FromBody] Product product)
+    public IActionResult PatchProduct([FromBody] List<PatchProductRequest> product)
     {
+      // Slow get...
+      foreach (var req in product)
+      {
+        var dbProd = Context.Products.FirstOrDefault(x => x.ItemId == req.ItemId && x.VendorId == req.VendorId);
+        if (dbProd == null)
+        {
+          return BadRequest($"Product not found: {req.ItemId} {req.VendorId}");
+        }
+
+        dbProd.PackageAmount = req.PackageAmount;
+        dbProd.Price = req.Price;
+        dbProd.SKU = req.SKU;
+        Context.Products.Update(dbProd);
+      }
+      Context.SaveChanges();
+
       return Ok();
     }
 
@@ -97,7 +138,7 @@ namespace PancakeCircus.Controllers.Api
     //Dont know if this is how you do the import part
     // Also I dont know how to input the cvs part into it. 
     [HttpPut("import")]
-    public IActionResult PutProduct([FromBody] Product product)
+    public IActionResult PutProducts([FromBody] Product product)
     {
       return Ok();
     }

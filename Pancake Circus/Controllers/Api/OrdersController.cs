@@ -80,7 +80,7 @@ namespace PancakeCircus.Controllers.Api
     }
 
     [HttpGet("copy/{itemId}")]
-    public IActionResult GetOrder(string itemId)
+    public IActionResult CopyOrder(string itemId)
     {
       var notfound = false;
       if (notfound)
@@ -110,6 +110,27 @@ namespace PancakeCircus.Controllers.Api
     public IActionResult GetOrders()
     {
       return Json(Context.Orders.ToList().Select(x => new ClientOrder(x, false)));
+    }
+
+    [HttpGet("{id}")]
+    public IActionResult GetOrder(string id)
+    {
+      var order = Context.Orders.FirstOrDefault(x => x.OrderId == id);
+      if (order == null)
+      {
+        return NotFound($"Order {id} not found");
+      }
+
+      // Get all of the order items now
+      var orderItems = Context.OrderItems.Include(x => x.Item)
+        .Include(x => x.Vendor)
+        .Include(x => x.Order)
+        .Where(x => x.OrderId == id)
+        .ToList()
+        .Select(x => new ClientOrderItem(x))
+        .ToList();
+
+      return Json(orderItems);
     }
   }
 }

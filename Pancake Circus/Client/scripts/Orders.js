@@ -31,9 +31,9 @@ let tableColumns = [
   {
     label: 'Price Paid',
     field: 'pricePaid',
-    width: '150px',
+    width: '100px',
     filter: true,
-    sort: 'string'
+    sort: 'number'
   },
   {
     label: 'Order Date',
@@ -44,10 +44,15 @@ let tableColumns = [
   },
   {
     label: 'Status',
-    field: 'name',
-    width: '100px',
+    field: 'status',
+    width: '110px',
     filter: true,
     sort: 'string'
+  },
+  {
+    label: 'Copy',
+    field: 'ph',
+    width: '80px'
   }
 ];
 export default {
@@ -55,7 +60,15 @@ export default {
     return {
       table: [],
       config: tableConfig,
-      columns: tableColumns
+      columns: tableColumns,
+      vendorOptions: [
+        {
+          label: 'None',
+          value: ''
+        }
+      ],
+      perferredVendor: '',
+      safetyFactor: 2.0
     };
   },
   methods: {
@@ -117,8 +130,34 @@ export default {
           return resp;
         },
         err => {
-          log(err);
+          console.log(err);
         });
+    },
+    updateVenderOptions() {
+      return this.$http.get(ResolveRoute('vendors')).then(resp => {
+        return resp.json()
+      },
+      err => {
+        console.log(err)
+      }).then(json => {
+        let newOpts = [
+          {
+            label: 'None',
+            value: ''
+          }
+        ]
+
+        // Create new options
+        json.forEach(v => {
+          newOpts.push({
+            label: v.name,
+            value: v.id
+          })
+        })
+
+        // Update vendor options
+        this.vendorOptions = newOpts
+      })
     },
     toTableFormat(obj) {
       const newData = [];
@@ -128,21 +167,65 @@ export default {
           status: val.status,
           pricePaid: val.pricePaid,
           itemCount: val.itemCount,
+          ph: 0,
           id: val.id
         });
       }
       return newData;
     },
-    gotoGenerate() {
-      GlobalBus.$emit('generateOrders');
+    generateOrder() {
+      
+    },
+    copyOrder() {
+      
+    },
+    showOrder(orderId) {
+      GlobalBus.$emit('showOrder', orderId)
+    },
+    approveDenyDialog(cell) {
+      Dialog.create({
+        title: 'Change order status',
+        message: 'What status would you like to set for this order?',
+        stackButtons: true,
+        buttons: [
+          {
+            label: 'Approved',
+            handler() {
+              console.log('Approved')
+            }
+          },
+          {
+            label: 'Denied',
+            handler() {
+              console.log('Denied')
+            }
+          },
+          {
+            label: 'Fullfilled',
+            handler() {
+              console.log('Fullfilled')
+            }
+          },
+          {
+            label: 'Cancel',
+            handler() {
+              console.log('Cancel')
+            }
+          }
+        ]
+      })
     }
-
   },
   mounted() {
     const resp = this.getNewData();
     resp.then(obj => {
       this.table = this.toTableFormat(obj);
     });
+
+    // Get vendor options now too
+    this.updateVenderOptions().then(v => {
+      console.log('Updated vendor options')
+    })
   }
 
 }

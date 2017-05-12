@@ -26,12 +26,10 @@ export default new VueRouter({
       component: load('Index'),
       children: [
         { path: 'orders', component: load('Orders') },
-        { path: 'vendors', component: load('Vendors') },
         { path: 'manage', component: load('Manage') },
         { path: 'inventory', component: load('Inventory') },
-        { path: 'vendorimport', component: load('VendorImport') },
         { path: 'login', component: load('Login') },
-        { path: 'generateorders', component: load('GenerateOrders') }
+        { path: 'vieworder', component: load('ViewOrder') }
       ]
     }, // Default
     { path: '*', component: load('Error404') } // Not found

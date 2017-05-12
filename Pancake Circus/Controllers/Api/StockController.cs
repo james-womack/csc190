@@ -20,41 +20,41 @@ namespace PancakeCircus.Controllers.Api
 
     public ApplicationDbContext Context { get; }
 
-    [HttpGet("current/{page}")]
-    public IActionResult GetStock(int page)
-    {
-      return Json(new List<Stock>());
-    }
-
-    [HttpGet("vendor/{vendorId}")]
-    public IActionResult GetStock(string vendorId)
-    {
-      var notFound = false;
-      if (notFound)
-        return NotFound();
-      return Json(new List<Stock>());
-    }
-
-    [HttpGet("item/{itemId}")]
-    public IActionResult GetItemStock(string itemId)
-    {
-      var notfound = false;
-      if (notfound)
-        return NotFound();
-      return Json(new List<Stock>());
-    }
-
-    [HttpGet("low")]
-    public IActionResult GetLowStock()
-    {
-      return Json(new List<Stock>());
-    }
-
     [HttpGet]
     public IActionResult GetStock()
     {
       var stocks = Context.Stocks.Include(x => x.Item).Include(x => x.Vendor).ToList().Select(s => new ClientStock(s));
       return Json(stocks);
+    }
+
+    [HttpPut]
+    public IActionResult PutStock([FromBody] List<AddStockRequest> stocks)
+    {
+      // Find Items and Vendors related to requests
+      var itemIds = stocks.Select(x => x.ItemId).ToList();
+      var vendorIds = stocks.Select(x => x.VendorId).ToList();
+      var dbItems = Context.Items.Where(x => itemIds.Contains(x.ItemId)).ToDictionary(x => x.ItemId, x => x);
+      var dbVendors = Context.Vendors.Where(x => vendorIds.Contains(x.VendorId)).ToDictionary(x => x.VendorId, x => x);
+
+      // Make sure they are of same length
+      if (dbItems.Count != itemIds.Count || dbVendors.Count != vendorIds.Count)
+      {
+        return BadRequest("Invalid Stock Add Requests: No item/vendor found in list");
+      }
+
+      foreach (var stock in stocks)
+      {
+        Context.Stocks.Add(new Stock()
+        {
+          Item = dbItems[stock.ItemId],
+          Vendor = dbVendors[stock.VendorId],
+          Amount = stock.Amount,
+          Location = stock.Location
+        });
+      }
+      Context.SaveChanges();
+
+      return Ok();
     }
 
     [HttpPatch]

@@ -19,11 +19,7 @@
       <div class="list platform-delimiter">
         <q-drawer-link icon="assessment" to="inventory">Inventory</q-drawer-link>
         <q-drawer-link icon="assignment" to="orders">Orders</q-drawer-link>
-        <q-drawer-link icon="assignment" to="generateorders">Generate Orders</q-drawer-link>
-        <q-drawer-link icon="face" to="vendors">Vendors</q-drawer-link>
         <q-drawer-link icon="supervisor_account" to="manage">Manage</q-drawer-link>
-        <q-drawer-link icon="import_export" to="vendorimport">Import Product</q-drawer-link>
-        <q-drawer-link icon="account_circle" to="login">Login</q-drawer-link>
       </div>
     </q-drawer>
 
@@ -49,10 +45,21 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.$router.replace('inventory')
-      GlobalBus.$off('generateOrders')
+
+      // Event for going to generate orders
       let _this = this
-      GlobalBus.$on('generateOrders', function () {
-        _this.$router.push('generateorders')
+
+      // Event for going to import product page
+      GlobalBus.$off('importProduct')
+      GlobalBus.$on('importProduct', function () {
+        _this.$router.push('importProduct')
+      })
+
+      // Event for going to view order page
+      GlobalBus.$off('showOrder')
+      GlobalBus.$on('showOrder', function (val) {
+        GlobalBus.showOrder = val
+        _this.$router.push('vieworder')
       })
     })
   },
