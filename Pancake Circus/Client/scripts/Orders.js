@@ -84,11 +84,8 @@ export default {
       const propsToDelete = [];
       const _this = this;
       props.rows.forEach(row => {
-        str += `${row.data.name}, `
-        propsToDelete.push({
-          itemId: row.data.itemId,
-          vendorId: row.data.vendorId
-        })
+        str += `${row.data.id}, `
+        propsToDelete.push(row.data.id)
       })
       Dialog.create({
         title: 'Confirm Deletion',
@@ -181,7 +178,22 @@ export default {
       return newData;
     },
     generateOrder() {
-      
+      let prefVendorId = this.perferredVendor.id || null
+      let genOrderReq = {
+        perferredVendorId: prefVendorId,
+        safetyFactor: this.safetyFactor
+      }
+
+      // Shoot the request
+      this.$http.post(ResolveRoute("orders/generate"), genOrderReq).then(x => {
+        return x.json()
+      }, err => {
+        Toast.create('Failed to generate order')
+        console.log(err)
+      }).then(x => {
+        this.table.push(this.toTableFormat([x])[0])
+        GlobalBus.$emit('showOrder', x.id)
+      })
     },
     copyOrder(cell) {
       this.$http.get(ResolveRoute(`orders/copy/${cell.row.id}`)).then(resp => {
@@ -198,37 +210,65 @@ export default {
       GlobalBus.$emit('showOrder', orderId)
     },
     approveDenyDialog(cell) {
-      Dialog.create({
-        title: 'Change order status',
-        message: 'What status would you like to set for this order?',
-        stackButtons: true,
-        buttons: [
-          {
-            label: 'Approved',
-            handler() {
-              console.log('Approved')
+      let selectedStatus = 0
+      let prom = new Promise((resolve, reject) => {
+        Dialog.create({
+          title: 'Change order status',
+          message: 'What status would you like to set for this order?',
+          stackButtons: true,
+          buttons: [
+            {
+              label: 'Approved',
+              handler() {
+                console.log('Approved')
+                selectedStatus = 3
+                resolve(3)
+              }
+            },
+            {
+              label: 'Denied',
+              handler() {
+                console.log('Denied')
+                selectedStatus = 2
+                resolve(2)
+              }
+            },
+            {
+              label: 'Fullfilled',
+              handler() {
+                console.log('Fullfilled')
+                selectedStatus = 1
+                resolve(1)
+              }
+            },
+            {
+              label: 'Cancel',
+              handler() {
+                console.log('Cancel')
+              }
             }
-          },
-          {
-            label: 'Denied',
-            handler() {
-              console.log('Denied')
-            }
-          },
-          {
-            label: 'Fullfilled',
-            handler() {
-              console.log('Fullfilled')
-            }
-          },
-          {
-            label: 'Cancel',
-            handler() {
-              console.log('Cancel')
-            }
+          ]
+        })
+      }).then(newStatus => {
+        return this.$http.get(ResolveRoute(`orders/status/${cell.row.id}/${newStatus}`))
+      }, err => {
+        Toast.create('User Cancelled')
+        console.log(err)
+      }).then(resp => {
+        // Update table entry  
+        let tableI = -1
+        this.table.forEach((x, i) => {
+          if (x.id === cell.row.id) {
+            tableI = i
           }
-        ]
+        })
+
+        this.table[tableI].status = selectedStatus
+        Toast.create('Update successful')
+      }, err => {
+        Toast.create('Failed to update status')
       })
+      
     }
   },
   mounted() {

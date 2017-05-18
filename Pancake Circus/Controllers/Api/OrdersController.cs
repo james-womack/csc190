@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using PancakeCircus.Data;
 using PancakeCircus.Models.Client;
@@ -27,8 +28,8 @@ namespace PancakeCircus.Controllers.Api
     }
 
     // Not done
-    [HttpGet("generate/{id?}")]
-    public IActionResult GenerateNewOrder(string id = null)
+    [HttpPost("generate")]
+    public IActionResult GenerateNewOrder([FromBody]GenerateOrderRequest req)
     {
       // Get the last two accepted orders, in the form of 
       // OrderItems total amount grouped by item id
@@ -36,6 +37,7 @@ namespace PancakeCircus.Controllers.Api
         .Include(x => x.OrderItems)
         .Where(x => x.Status == OrderStatus.Approved)
         .OrderByDescending(x => x.OrderDate)
+        .ToList()
         .Take(2)
         .SelectMany(x => x.OrderItems)
         .GroupBy(x => x.ItemId, x => x.TotalAmount)
@@ -46,9 +48,11 @@ namespace PancakeCircus.Controllers.Api
       var stockItems = Context.Stocks
         .Include(x => x.Item)
         .Select(x => x.Item)
+        .Distinct((i1, i2) => i1.ItemId == i2.ItemId)
         .ToList();
-      var needsForEachItem = stockItems.ToDictionary(x => x.ItemId, x => x.MinimumAmount * SafetyFactor);
+      var needsForEachItem = stockItems.ToDictionary(x => x.ItemId, x => x.MinimumAmount * req.SafetyFactor);
       var itemsNeeded = stockItems.Select(x => x.ItemId).ToList();
+      var itemsDict = stockItems.ToDictionary(x => x.ItemId);
       
       // Factor in last two accepted orders if there is any
       if (lastTwoOrders.Count > 0)
@@ -64,26 +68,97 @@ namespace PancakeCircus.Controllers.Api
         }
       }
 
+      // Create new order
+      var order = new Order()
+      {
+        OrderDate = DateTime.Now,
+        OrderItems = new List<OrderItem>(),
+        Status = OrderStatus.None
+      };
+      Context.Orders.Add(order);
+      Context.SaveChanges();
+
       // Get all of the products contained in the itemsNeeded,
       // And group them by itemId, sort each group by price per unit
       var availableProducts = Context.Products
         .Where(x => itemsNeeded.Contains(x.ItemId))
         .ToList();
-      if (id != null)
+      if (!string.IsNullOrWhiteSpace(req.PerferredVendorId))
       {
-        // Select vendor favorites
+        // Get that vendor
+        var prefVendor = Context.Vendors
+          .Include(x => x.Products)
+          .FirstOrDefault(x => x.VendorId == req.PerferredVendorId);
+        var gottenItems = new List<string>();
+
+        if (prefVendor == null)
+        {
+          return BadRequest($"Vendor {req.PerferredVendorId} not found");
+        }
+
+        // Turn product list into dict
+        var vendorProductDict = prefVendor.Products.ToDictionary(x => x.ItemId);
+
+        // Go through items needed and pull from vendor product dict
+        foreach (var item in itemsNeeded)
+        {
+          if (vendorProductDict.ContainsKey(item))
+          {
+            var prod = vendorProductDict[item];
+            var orderAmount = (int) Math.Ceiling(needsForEachItem[item] / prod.PackageAmount);
+            var totalAmount = (int)(orderAmount * prod.PackageAmount);
+            var price = orderAmount * prod.Price;
+
+            order.OrderItems.Add(new OrderItem()
+            {
+              Item = itemsDict[item],
+              Order = order,
+              Vendor = prefVendor,
+              PaidPrice = price,
+              OrderAmount = orderAmount,
+              TotalAmount = totalAmount
+            });
+            gottenItems.Add(item);
+          }
+        }
+
+        // Remove needs now
+        itemsNeeded.RemoveAll(x => gottenItems.Contains(x));
       }
-      var cheapestProduct = availableProducts.GroupBy(x => x.ItemId)
-        .Select(x => new { ItemId = x.Key, Products = x.OrderBy(p => Math.Abs(p.PackageAmount) > .001 ? p.Price / p.PackageAmount : p.Price).ToList() })
-        .ToDictionary(x => x.ItemId, x => x.Products);
-      var vendorProducts = from prod in availableProducts
-        group prod by prod.VendorId
-        into vendorProds
-        let vendorItems = vendorProds.Select(x => x.ItemId).ToList()
-        select vendorProds;
+      var cheapestProduct = GetCheapestProducts();
+
+      // Fill in cheapest product now
+      foreach (var item in itemsNeeded)
+      {
+        try
+        {
+          var prod = cheapestProduct[item][0];
+          var orderAmount = (int)Math.Ceiling(needsForEachItem[item] / prod.PackageAmount);
+          var totalAmount = (int)(orderAmount * prod.PackageAmount);
+          var price = orderAmount * prod.Price;
+
+          order.OrderItems.Add(new OrderItem()
+          {
+            Item = itemsDict[item],
+            Order = order,
+            Vendor = prod.Vendor,
+            PaidPrice = price,
+            OrderAmount = orderAmount,
+            TotalAmount = totalAmount
+          });
+        }
+        catch (Exception e)
+        {
+          Logger.LogDebug($"Failed to find product for item id {item}, e: {e}");
+        }
+      }
+
+      // Save the order now
+      Context.Orders.Update(order);
+      Context.SaveChanges();
                            
       // Get all of the vendors price for orders
-      return Json(new List<OrderItem>());
+      return Json(new ClientOrder(order, false));
     }
 
     [HttpGet("copy/{orderId}")]
@@ -168,7 +243,7 @@ namespace PancakeCircus.Controllers.Api
       return grps;
     }
 
-    [HttpGet("status/{orderId}/{status}")]
+    [HttpGet("status/{orderId}/{newStatus}")]
     public IActionResult ChangeOrderStatus(string orderId, int newStatus)
     {
       if (!Enum.IsDefined(typeof(OrderStatus), newStatus))
@@ -187,6 +262,8 @@ namespace PancakeCircus.Controllers.Api
       order.Status = status;
       Context.Orders.Update(order);
       Context.SaveChanges();
+
+      // Update stock if change is to fullfilled
 
       return Ok();
     }
@@ -357,6 +434,21 @@ namespace PancakeCircus.Controllers.Api
         .ToList();
 
       return Json(orderItems);
+    }
+
+    [HttpDelete]
+    public IActionResult DeleteOrders([FromBody]List<string> orderIds)
+    {
+      var ordersToDel = Context.Orders.Where(x => orderIds.Contains(x.OrderId)).ToList();
+      if (orderIds.Count != ordersToDel.Count)
+      {
+        return BadRequest("Some orders were not in the DB");
+      }
+
+      Context.Orders.RemoveRange(ordersToDel);
+      Context.SaveChanges();
+
+      return Ok();
     }
   }
 }
