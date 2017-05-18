@@ -631,23 +631,6 @@ export default {
     },
     // Saves the changes done to the manage page
     saveChanges() {
-      /*
-      console.log('Item Changes')
-      console.log(this.itemsEdits)
-      console.log(this.itemsNew)
-      console.log(this.itemsDelete)
-
-      console.log('Vendor Changes')
-      console.log(this.vendorsEdits)
-      console.log(this.vendorsNew)
-      console.log(this.vendorsDelete)
-
-      console.log('Product Changes')
-      console.log(this.productsEdits)
-      console.log(this.productsNew)
-      console.log(this.productsDelete)
-      */
-
       // Convert product edits into server type
       let productEdits = []
       this.productsEdits.forEach(p => {

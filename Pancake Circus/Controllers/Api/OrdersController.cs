@@ -24,8 +24,8 @@ namespace PancakeCircus.Controllers.Api
     }
 
     // Not done
-    [HttpGet("generate")]
-    public IActionResult GenerateNewOrder()
+    [HttpGet("generate/{id?}")]
+    public IActionResult GenerateNewOrder(string id = null)
     {
       // Get the last two accepted orders, in the form of 
       // OrderItems total amount grouped by item id
@@ -66,6 +66,10 @@ namespace PancakeCircus.Controllers.Api
       var availableProducts = Context.Products
         .Where(x => itemsNeeded.Contains(x.ItemId))
         .ToList();
+      if (id != null)
+      {
+        // Select vendor favorites
+      }
       var cheapestProduct = availableProducts.GroupBy(x => x.ItemId)
         .Select(x => new { ItemId = x.Key, Products = x.OrderBy(p => Math.Abs(p.PackageAmount) > .001 ? p.Price / p.PackageAmount : p.Price).ToList() })
         .ToDictionary(x => x.ItemId, x => x.Products);

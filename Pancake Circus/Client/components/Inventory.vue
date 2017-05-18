@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-    <q-fab v-if="edits.change.length !== 0 || edits.delete.length !== 0"
+    <q-fab v-if="edits.change.length !== 0 || edits.delete.length !== 0 || edits.new.length !== 0"
            class="absolute-bottom-right"
            @click="commitEdits()"
            classNames="primary"
@@ -23,6 +23,11 @@
                       v-model="newStockVendor"
                       :options="vendorOptions"
                       label="From Vendor"></q-select>
+            <div class="card bg-red text-white" style="margin: 8px" v-if="dupFound">
+              <div class="card-content">
+                That stock already exists, pick a unique combo of Item and Vendor
+              </div>
+            </div>
             <div class="floating-label">
               <input required class="full-width" v-model.trim="newStockLocation" type="text" />
               <label>Location</label>
@@ -31,7 +36,10 @@
               <input required class="full-width" v-model.number="newStockAmount" type="number" />
               <label>Amount</label>
             </div>
-            <button class="primary" style="margin-top: 8px">
+            <button v-if="!dupFound && newStockItem !== null && newStockVendor !== null && newStockAmount > 0 && newStockLocation !== ''" class="primary" style="margin-top: 8px" @click="addStock()">
+              Add Stock
+            </button>
+            <button v-else class="primary disabled" style="margin-top: 8px">
               Add Stock
             </button>
           </div>
@@ -48,6 +56,27 @@
         </template>
         <template slot="col-location" scope="cell">
           <button class="blue clear small" @click="editLocation(cell.row)">{{ cell.data }}</button>
+        </template>
+        <template slot="col-editStatus" scope="cell">
+          <div v-if="cell.data == 'edit'">
+            <i>edit</i>
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+              Edited Item
+            </q-tooltip>
+          </div>
+          <div v-else-if="cell.data == 'new'">
+            <i>new_releases</i>
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+              New Item
+            </q-tooltip>
+          </div>
+          <div v-else-if="cell.data == 'delete'">
+            <i>delete_forever</i>
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+              Delete Item
+            </q-tooltip>
+          </div>
+          <div v-else></div>
         </template>
 
         <template slot="selection" scope="props">

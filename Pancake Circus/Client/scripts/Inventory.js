@@ -52,6 +52,11 @@ let tableColumns = [
     width: '150px',
     filter: true,
     sort: 'string'
+  },
+  {
+    label: 'Status',
+    field: 'editStatus',
+    width: '50px'
   }
 ];
 
@@ -66,12 +71,14 @@ export default {
       vendorOptions: [],
       edits: {
         delete: [],
-        change: []
+        change: [],
+        new: []
       },
       newStockItem: null,
       newStockVendor: null,
       newStockAmount: '',
-      newStockLocation: ''
+      newStockLocation: '',
+      dupFound: false
     };
   },
   methods: {
@@ -79,6 +86,7 @@ export default {
       // Adds any pending changes to the database
       let deleteOp = Promise.resolve();
       let editOp = Promise.resolve();
+      let newOp = Promise.resolve();
 
       // Resolve all of the requests to the server
       if (this.edits.delete.length !== 0) {
@@ -87,13 +95,20 @@ export default {
       if (this.edits.change.length !== 0) {
         editOp = this.$http.patch(ResolveRoute('stock'), this.edits.change)
       }
+      if (this.edits.new.length !== 0) {
+        newOp = this.$http.put(ResolveRoute('stock'), this.edits.new)
+      }
 
       // Show toast for success/failure
-      const finish = Promise.all([deleteOp, editOp]);
+      const finish = Promise.all([deleteOp, editOp, newOp]);
       finish.then(resp => {
           Toast.create('Changes Saved!')
           this.edits.change = []
           this.edits.delete = []
+          this.edits.new = []
+          this.table.forEach(i => {
+            i.editStatus = 'none'
+          })
         },
         e => {
           Toast.create('Failed to save changes...')
@@ -150,7 +165,7 @@ export default {
                 }
 
                 // Delete from the table
-                _this.table.splice(row.index, 1)
+                _this.table[row.index].editStatus = 'delete'
               })
               Toast.create(`Deleted ${propsToDelete.length} rows...`)
 
@@ -167,11 +182,39 @@ export default {
 
     },
     addStock() {
-      console.log("Add stock")
+      // Create object representing stock item for table
+      let stockItem = {
+        name: this.newStockItem.name,
+        amount: this.newStockAmount,
+        location: this.newStockLocation,
+        minAmount: this.newStockItem.minimumAmount,
+        vendor: this.newStockVendor.name,
+        vendorId: this.newStockVendor.id,
+        itemId: this.newStockItem.id,
+        editStatus: 'new'
+      }
+
+      // Server object representation
+      let serverStockItem = {
+        itemId: this.newStockItem.id,
+        vendorId: this.newStockVendor.id,
+        amount: this.newStockAmount,
+        location: this.newStockLocation
+      }
+
+      // Add new stock item to list
+      this.edits.new.push(serverStockItem)
+      this.table.push(stockItem)
+
+      // Clear out controls
+      this.newStockItem = null
+      this.newStockVendor = null
+      this.newStockAmount = ''
+      this.newStockLocation = ''
     },
     refresh(done) {
       // See if there are any pending changes
-      if (this.edits.change.length === 0 && this.edits.delete.length === 0) {
+      if (this.edits.change.length === 0 && this.edits.delete.length === 0 && this.edits.new.length === 0) {
         // No pending changes, refresh the inventory
         this.getNewData().then(obj => {
           this.table = this.toTableFormat(obj);
@@ -191,6 +234,7 @@ export default {
               handler(data) {
                 _this.edits.change = []
                 _this.edits.delete = []
+                _this.edits.new = []
 
                 _this.getNewData().then(obj => {
                   _this.table = _this.toTableFormat(obj)
@@ -224,7 +268,8 @@ export default {
           minAmount: val.item.minimumAmount,
           vendor: val.vendor.name,
           vendorId: val.vendor.id,
-          itemId: val.item.id
+          itemId: val.item.id,
+          editStatus: 'none'
         });
       }
       return newData
@@ -366,7 +411,39 @@ export default {
 
       this.table[tableIndex].amount = data.amount
       this.table[tableIndex].location = data.location
+      this.table[tableIndex].editStatus = 'edit'
       console.log(this.edits)
+    },
+    updateDuplicateStatus() {
+      let dupFound = false
+      this.table.forEach(r => {
+        if (r.vendorId === this.newStockVendor.id && r.itemId === this.newStockItem.id) {
+          dupFound = true
+        }
+      })
+
+      // Update status
+      this.dupFound = dupFound
+    }
+  },
+  watch: {
+    newStockItem(newVal) {
+      if (newVal === null || newVal === undefined) {
+        return
+      }
+
+      if (this.newStockVendor !== null || this.newStockVendor !== undefined) {
+        this.updateDuplicateStatus()
+      }
+    },
+    newStockVendor(newVal) {
+      if (newVal === null || newVal === undefined) {
+        return
+      }
+
+      if (this.newStockItem !== null || this.newStockItem !== undefined) {
+        this.updateDuplicateStatus()
+      }
     }
   },
   mounted() {
