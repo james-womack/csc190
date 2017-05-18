@@ -104,6 +104,7 @@ export default {
               vendorId: prod.vendor.id,
               itemName: prod.item.name,
               vendorName: prod.vendor.name,
+              units: prod.item.units,
               sku: prod.sku,
               price: prod.price,
               packageAmount: prod.packageAmount
@@ -370,6 +371,7 @@ export default {
         paidPrice: this.newPrice,
         itemName: this.newSelectedProduct.itemName,
         vendorName: this.newSelectedProduct.vendorName,
+        units: this.newSelectedProduct.units,
         editStatus: 'new'
       }
 
