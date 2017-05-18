@@ -1,4 +1,4 @@
-﻿import { Toast } from 'quasar'
+﻿import { Toast, Dialog } from 'quasar'
 import { ResolveRoute, GlobalBus } from '../scripts/Utility'
 
 let tableConf = {
@@ -15,14 +15,14 @@ let tableCols = [
     field: 'itemName',
     filter: true,
     sort: 'string',
-    width: '100px'
+    width: '60px'
   },
   {
     label: 'Vendor',
     field: 'vendorName',
     filter: true,
     sort: 'string',
-    width: '100px'
+    width: '60px'
   },
   {
     label: 'Price',
@@ -44,6 +44,11 @@ let tableCols = [
     label: 'Total Amount',
     field: 'totalAmount',
     sort: 'number',
+    width: '40px'
+  },
+  {
+    label: 'Status',
+    field: 'editStatus',
     width: '40px'
   }
 ]
@@ -142,7 +147,8 @@ export default {
             vendorId: oi.vendor.id,
             paidPrice: oi.paidPrice,
             totalAmount: oi.totalAmount,
-            orderAmount: oi.orderAmount
+            orderAmount: oi.orderAmount,
+            editStatus: 'none'
           })
         })
       }, err => {
@@ -155,14 +161,151 @@ export default {
       this.delete = []
       this.newSelectedItem = null
     },
-    editRow (row) {
-      
+    editRow(row) {
+      // Make sure there is no new one waitin
+      let wain = false
+      let newI = -1
+      this.new.forEach((n, i) => {
+        if (n.itemId === row.row.itemId && n.vendorId === row.row.vendorId) {
+          wain = true
+          newI = i
+        }
+      })
+
+      let prom = new Promise((resolve, rej) => {
+        Dialog.create({
+          title: 'Enter Amount',
+          form: {
+            amt: {
+              type: 'numeric',
+              label: 'New Amount',
+              model: `${row.row.orderAmount}`
+            }
+          },
+          buttons: [
+            {
+              label: 'Cancel',
+              handler(data) {
+                rej(Error('User Cancelled'))
+              }
+            },
+            {
+              label: 'Ok',
+              preventClose: true,
+              handler(data, close) {
+                if (data.amt > 0) {
+                  close(() => {
+                    resolve(data.amt.toFixed(0))
+                  })
+
+                  return
+                }
+
+                Toast.create('Please enter a positive number > 0')
+              }
+            }
+          ]
+        })
+      }).then(d => {
+        if (wain) {
+          // edit new value
+          this.new[newI].orderAmount = d
+        } else {
+          // Look for exist edit
+          let existI = -1
+          this.edit.forEach((e, i) => {
+            if (e.itemId === row.row.itemId && e.vendorId === row.row.vendorId) {
+              existI = i
+            }
+          })
+
+          if (existI >= 0) {
+            // Edit existing edit
+            this.edit[existI].paidPrice = d * row.row.paidPrice / row.row.orderAmount
+            this.edit[existI].orderAmount = d
+          } else {
+            // Make sure there is no new already
+            let newI = -1
+            this.new.forEach((n, i) => {
+              if (n.itemId === row.row.itemId && n.vendorId === row.row.vendorId) {
+                newI = i
+              }
+            })
+            if (newI < 0) {
+              this.edit.push({
+                vendorId: row.row.vendorId,
+                itemId: row.row.itemId,
+                orderId: this.order,
+                orderAmount: d,
+                paidPrice: d * row.row.paidPrice / row.row.orderAmount
+              })
+            } else {
+              this.new[newI].paidPrice = d * row.row.paidPrice / row.row.orderAmount
+              this.new[newI].orderAmount = d
+            }
+          }
+
+          // Update rows
+          let dI = -1
+          this.data.forEach((d, i) => {
+            if (d.vendorId === row.row.vendorId && d.itemId === row.row.itemId) {
+              dI = i
+            }
+          })
+          this.data[dI].paidPrice = d * row.row.paidPrice / row.row.orderAmount
+          this.data[dI].orderAmount = d
+          this.data[dI].editStatus = 'edit'
+        }
+      })
     },
-    deleteRow (row) {
-      
-    },
-    addRow (data) {
-      
+    deleteRows (props) {
+      props.rows.forEach(oi => {
+        // Check for exist edit
+        let eI = -1
+        this.edit.forEach((d, i) => {
+          if (d.itemId === oi.itemId && d.vendorId === oi.vendorId) {
+            eI = i
+          }
+        })
+        if (eI >= 0) {
+          // Drop the exit edit
+          this.edit.splice(eI, 1)
+        }
+
+        // Add to delete list, if not already there
+        let shouldAdd = true
+        this.delete.forEach(d => {
+          if (d.itemId === oi.itemId && d.vendorId === oi.vendorId) {
+            shouldAdd = false
+          }
+        })
+
+        let newI = -1
+        this.new.forEach((n, i) => {
+          if (n.itemId === oi.itemId && n.vendorId === oi.vendorId) {
+            newI = i
+          }
+        })
+
+        if (newI >= 0) {
+          this.new.splice(newI, 1)
+        } else if (shouldAdd) {
+          this.delete.push({
+            itemId: oi.itemId,
+            vendorId: oi.vendorId,
+            orderId: oi.orderId
+          })
+        }
+
+        // Update table entry
+        let tableI = -1
+        this.data.forEach((d, i) => {
+          if (d.itemId === oi.itemId && d.vendorId === oi.vendorId) {
+            tableI = i
+          }
+        })
+        this.data[tableI].editStatus = 'delete'
+      })
     },
     saveChanges() {
       

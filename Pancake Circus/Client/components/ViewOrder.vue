@@ -41,8 +41,36 @@
                     :config="conf"
                     :columns="cols">
         <template slot="col-orderAmount" scope="cell">
-          <button class="green small round" @click="editOrderAmount(cell)">
+          <button class="green small round" @click="editRow(cell)">
           {{ cell.data }}
+          </button>
+        </template>
+
+        <template slot="col-editStatus" scope="cell">
+          <div v-if="cell.data == 'edit'">
+            <i>edit</i>
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+              Edited Item
+            </q-tooltip>
+          </div>
+          <div v-else-if="cell.data == 'new'">
+            <i>new_releases</i>
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+              New Item
+            </q-tooltip>
+          </div>
+          <div v-else-if="cell.data == 'delete'">
+            <i>delete_forever</i>
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, -10]">
+              Delete Item
+            </q-tooltip>
+          </div>
+          <div v-else></div>
+        </template>
+
+        <template slot="selection" scope="props">
+          <button class="primary clear" @click="deleteRows(props)">
+            <i>delete</i>
           </button>
         </template>
       </q-data-table>
