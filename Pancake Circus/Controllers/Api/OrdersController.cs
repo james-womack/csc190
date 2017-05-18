@@ -251,7 +251,12 @@ namespace PancakeCircus.Controllers.Api
         return BadRequest("Invalid order status");
       }
 
-      var order = Context.Orders.FirstOrDefault(x => x.OrderId == orderId);
+      var order = Context.Orders
+        .Include(x => x.OrderItems)
+        .ThenInclude(x => x.Item)
+        .Include(x => x.OrderItems)
+        .ThenInclude(x => x.Vendor)
+        .FirstOrDefault(x => x.OrderId == orderId);
       if (order == null)
       {
         return NotFound($"Order {orderId} not found");
@@ -264,6 +269,31 @@ namespace PancakeCircus.Controllers.Api
       Context.SaveChanges();
 
       // Update stock if change is to fullfilled
+      if (status == OrderStatus.Fulfilled)
+      {
+        foreach (var item in order.OrderItems)
+        {
+          var existStock = Context.Stocks.Where(x => x.ItemId == item.ItemId).ToList();
+          var newStock = new Stock()
+          {
+            Vendor = item.Vendor,
+            Item = item.Item,
+            Amount = existStock.Sum(x => x.Amount) + item.TotalAmount,
+            Location = existStock.FirstOrDefault()?.Location ?? "Unknown"
+          };
+
+          if (existStock.Count != 0)
+          {
+            // Delete the existing stock
+            Context.Stocks.RemoveRange(existStock);
+            Context.SaveChanges();
+          }
+
+          // Now add the new stock
+          Context.Stocks.Add(newStock);
+          Context.SaveChanges();
+        }
+      }
 
       return Ok();
     }
