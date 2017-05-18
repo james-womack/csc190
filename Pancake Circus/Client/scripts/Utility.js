@@ -1,4 +1,7 @@
 ﻿import Vue from 'vue'
+import Config from 'config'
+
+console.log(Config)
 
 function clone (obj) {
   var copy
@@ -39,7 +42,7 @@ function clone (obj) {
 }
 
 function ResolveRoute (route) {
-  return `http://localhost:5000/api${route.startsWith('/') ? '' : '/'}${route}`
+  return `${Config.server}api${route.startsWith('/') ? '' : '/'}${route}`
 }
 
 var GlobalBus = new Vue({
