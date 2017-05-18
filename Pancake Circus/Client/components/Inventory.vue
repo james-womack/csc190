@@ -51,8 +51,8 @@
           <span class="label">{{ cell.data }}</span>
         </template>
         <template slot="col-amount" scope="cell">  
-          <button v-if="cell.row.amount >= cell.row.minAmount" class="green small round" @click="editAmount(cell.row)">{{ cell.data }}</button>
-          <button v-else class="red small round" @click="editAmount(cell.row)">{{ cell.data }}</button>
+          <button v-if="cell.row.amount >= cell.row.minAmount" class="green small round" @click="editAmount(cell.row)">{{ cell.data }} {{ cell.row.units }}</button>
+          <button v-else class="red small round" @click="editAmount(cell.row)">{{ cell.data }} {{ cell.row.units }}</button>
         </template>
         <template slot="col-location" scope="cell">
           <button class="blue clear small" @click="editLocation(cell.row)">{{ cell.data }}</button>

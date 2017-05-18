@@ -33,14 +33,21 @@ let tableColumns = [
     field: 'pricePaid',
     width: '100px',
     filter: true,
-    sort: 'number'
+    sort: 'number',
+    format(val, row) {
+      return `$${(val/100).toFixed(2)}`
+    }
   },
   {
     label: 'Order Date',
     field: 'orderDate',
     width: '100px',
     filter: true,
-    sort: 'date'
+    sort: 'date',
+    format(val, row) {
+      let date = new Date(val)
+      return date.toLocaleDateString()
+    }
   },
   {
     label: 'Status',
@@ -176,8 +183,16 @@ export default {
     generateOrder() {
       
     },
-    copyOrder() {
-      
+    copyOrder(cell) {
+      this.$http.get(ResolveRoute(`orders/copy/${cell.row.id}`)).then(resp => {
+        return resp.json()
+      }, err => {
+        Toast.create('Failed to copy order')
+        console.log(err)
+      }).then(x => {
+        this.table.push(x)
+        GlobalBus.$emit('showOrder', x.id)
+      })
     },
     showOrder(orderId) {
       GlobalBus.$emit('showOrder', orderId)

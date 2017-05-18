@@ -27,14 +27,14 @@ let tableColumns = [
   {
     label: 'Name',
     field: 'name',
-    width: '100px',
+    width: '60px',
     filter: true,
     sort: 'string'
   },
   {
     label: 'Location',
     field: 'location',
-    width: '80px',
+    width: '60px',
     filter: true,
     sort: 'string'
   },
@@ -44,12 +44,11 @@ let tableColumns = [
     width: '80px',
     filter: true,
     sort: 'number'
-
   },
   {
     label: 'Vendor',
     field: 'vendor',
-    width: '150px',
+    width: '100px',
     filter: true,
     sort: 'string'
   },
@@ -119,6 +118,7 @@ export default {
       // Just discards any pending edits
       this.edits.change = []
       this.edits.delete = []
+      this.edits.new = []
       this.refresh(() => {})
     },
     deleteRows(props) {
@@ -191,6 +191,7 @@ export default {
         vendor: this.newStockVendor.name,
         vendorId: this.newStockVendor.id,
         itemId: this.newStockItem.id,
+        units: this.newStockItem.units,
         editStatus: 'new'
       }
 
@@ -269,6 +270,7 @@ export default {
           vendor: val.vendor.name,
           vendorId: val.vendor.id,
           itemId: val.item.id,
+          units: val.item.units,
           editStatus: 'none'
         });
       }
